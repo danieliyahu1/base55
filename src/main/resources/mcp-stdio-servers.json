@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "coingecko": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://mcp.api.coingecko.com/sse"
+      ]
+    },
+    "g-search": {
+      "command": "npx",
+      "args": ["-y", "g-search-mcp"]
+    },
+    "read-website-fast": {
+      "command": "npx",
+      "args": ["-y", "@just-every/mcp-read-website-fast"]
+    }
+  }
+}
