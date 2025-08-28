@@ -5,6 +5,6 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class AiRequest {
+public class AiRequestDTO {
     private String prompt;
 }

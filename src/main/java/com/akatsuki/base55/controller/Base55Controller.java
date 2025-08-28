@@ -1,7 +1,7 @@
 package com.akatsuki.base55.controller;
 
-import com.akatsuki.base55.dto.AiRequest;
-import com.akatsuki.base55.dto.AiResponse;
+import com.akatsuki.base55.dto.AiRequestDTO;
+import com.akatsuki.base55.dto.AiResponseDTO;
 import com.akatsuki.base55.service.Base55Service;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,12 +16,12 @@ public class Base55Controller {
     }
 
     @PostMapping("/ask")
-    public AiResponse askLlm(@RequestBody AiRequest request) {
+    public AiResponseDTO askLlm(@RequestBody AiRequestDTO request) {
         return base55Service.askLlm(request);
     }
 
-    @GetMapping("/tools")
-    public String getTools(){
-        return base55Service.getTools();
+    @PostMapping("/execute")
+    public AiResponseDTO executeTask(@RequestBody AiRequestDTO request){
+        return base55Service.executeTask(request.getPrompt());
     }
 }

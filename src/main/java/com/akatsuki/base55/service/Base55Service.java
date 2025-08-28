@@ -1,26 +1,26 @@
 package com.akatsuki.base55.service;
 
-import com.akatsuki.base55.dto.AiRequest;
-import com.akatsuki.base55.dto.AiResponse;
+import com.akatsuki.base55.dto.AiRequestDTO;
+import com.akatsuki.base55.dto.AiResponseDTO;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
-
-import java.util.stream.Collectors;
 
 @Service
 public class Base55Service {
 
     private final ChatClient chatClient;
+    AiOrchestratorService aiOrchestratorService;
 
-    public Base55Service(ChatClient chatClient) {
+    public Base55Service(ChatClient chatClient, AiOrchestratorService aiOrchestratorService) {
         this.chatClient = chatClient;
+        this.aiOrchestratorService = aiOrchestratorService;
     }
 
-    public AiResponse askLlm(AiRequest request) {
-        return new AiResponse(this.chatClient.prompt(request.getPrompt()).tools().call().content());
+    public AiResponseDTO askLlm(AiRequestDTO request) {
+        return new AiResponseDTO(this.chatClient.prompt(request.getPrompt()).tools().call().content());
     }
 
-    public String getTools() {
-        return "tools";
+    public AiResponseDTO executeTask (String task) {
+        return new AiResponseDTO(aiOrchestratorService.executeTask(task).result());
     }
 }
