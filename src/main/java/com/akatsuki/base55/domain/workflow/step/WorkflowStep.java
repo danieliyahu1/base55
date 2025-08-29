@@ -1,4 +1,4 @@
-package com.akatsuki.base55.domain.workflow;
+package com.akatsuki.base55.domain.workflow.step;
 
 import java.util.List;
 import java.util.Map;

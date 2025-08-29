@@ -2,24 +2,36 @@ package com.akatsuki.base55.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.huggingface.HuggingfaceChatModel;
+import org.springframework.ai.tool.ToolCallbackProvider;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.ai.tool.ToolCallbackProvider;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Configuration
 public class AiConfig {
 
     @Bean
-    public ChatClient chatClient(ChatClient.Builder chatClientBuilder, ToolCallbackProvider toolCallbackProvider) {
-        log.info("toolCallbackProvider: {}",
-                Arrays.stream(toolCallbackProvider.getToolCallbacks())
-                        .map(tc -> tc.getToolDefinition().name())
-                        .collect(Collectors.joining(", ")));
-        log.info("toolCallbackProvider count: {}", toolCallbackProvider.getToolCallbacks().length);
-        return chatClientBuilder.defaultToolCallbacks(toolCallbackProvider).build();
+    @Qualifier("openAiChatClient")
+    public ChatClient openAiChatClient(
+            @Qualifier("openAiChatModel") ChatModel openAiChatModel,
+            ToolCallbackProvider toolCallbackProvider) {
+
+        log.info("Registering OpenAI ChatClient with {} tool callbacks",
+                toolCallbackProvider.getToolCallbacks().length);
+
+        return ChatClient.builder(openAiChatModel)
+                .defaultToolCallbacks(toolCallbackProvider)
+                .build();
+    }
+
+    @Bean
+    @Qualifier("huggingFaceChatClient")
+    public ChatClient huggingFaceChatClient(
+            @Qualifier("huggingfaceChatModel") HuggingfaceChatModel huggingfaceChatModel) {
+        return ChatClient.builder(huggingfaceChatModel)
+                .build();
     }
 }

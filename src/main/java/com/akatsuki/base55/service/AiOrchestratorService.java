@@ -1,14 +1,14 @@
 package com.akatsuki.base55.service;
 
+import com.akatsuki.base55.domain.orchestrator.OrchestratorNextStepRequest;
+import com.akatsuki.base55.domain.orchestrator.OrchestratorNextStepResponse;
 import com.akatsuki.base55.domain.workflow.*;
-import com.akatsuki.base55.dto.AiRequestDTO;
-import com.akatsuki.base55.dto.AiResponseDTO;
-import com.akatsuki.base55.exception.WorkflowParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.akatsuki.base55.domain.workflow.step.WorkflowStep;
+import com.akatsuki.base55.domain.workflow.step.WorkflowStepRequest;
+import com.akatsuki.base55.domain.workflow.step.WorkflowStepResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -19,21 +19,25 @@ import static com.akatsuki.base55.constant.orchestrationConstants.*;
 @Slf4j
 @Service
 public class AiOrchestratorService {
-    private final ChatClient chatClient;
+    private final ChatClient groqChatClient;
+    private final ChatClient huggingfaceChatClient;
 
-    public AiOrchestratorService(ChatClient chatClient) {
-        this.chatClient = chatClient;
+    public AiOrchestratorService(@Qualifier("openAiChatClient") ChatClient groqChatClient,
+                                 @Qualifier("huggingFaceChatClient") ChatClient huggingfaceChatClient) {
+        this.groqChatClient = groqChatClient;
+        this.huggingfaceChatClient = huggingfaceChatClient;
     }
 
     public WorkflowStepResponse executeTask(String task) {
         // Implement orchestration logic here
+        log.info("Starting orchestration for task: {}", task);
         Workflow workflow = generateWorkflow(task);
         log.info("Generated workflow: {} \n analysis: {}", workflow.WorkflowSteps(), workflow.analysis());
         return executeWorkflow(task, workflow);
     }
 
     private Workflow generateWorkflow(String prompt){
-        return this.chatClient.prompt()
+        return this.huggingfaceChatClient.prompt()
                 .user(u -> u.text(WORKFLOW_PROMPT)
                         .param("task", prompt))
                 .call()
@@ -76,7 +80,7 @@ public class AiOrchestratorService {
                 nextSteps
         );
 
-        OrchestratorNextStepResponse chosenStepId = this.chatClient.prompt()
+        OrchestratorNextStepResponse chosenStepId = this.huggingfaceChatClient.prompt()
                 .user(u -> u.text(DETERMINE_NEXT_STEP_PROMPT)
                         .param("OrchestratorNextStepRequest", orchestratorNextStepRequest))
                 .call()
@@ -96,7 +100,7 @@ public class AiOrchestratorService {
     }
 
     private WorkflowStepResponse executeStep(WorkflowStepRequest workflowStepRequest) {
-        return this.chatClient.prompt()
+        return this.groqChatClient.prompt()
                 .user(u -> u.text(WORKFLOW_STEP_PROMPT)
                         .param("workflowStepRequest", workflowStepRequest))
                 .call()

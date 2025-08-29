@@ -3,6 +3,7 @@ package com.akatsuki.base55.service;
 import com.akatsuki.base55.dto.AiRequestDTO;
 import com.akatsuki.base55.dto.AiResponseDTO;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,7 +12,7 @@ public class Base55Service {
     private final ChatClient chatClient;
     AiOrchestratorService aiOrchestratorService;
 
-    public Base55Service(ChatClient chatClient, AiOrchestratorService aiOrchestratorService) {
+    public Base55Service(@Qualifier("openAiChatClient") ChatClient chatClient, AiOrchestratorService aiOrchestratorService) {
         this.chatClient = chatClient;
         this.aiOrchestratorService = aiOrchestratorService;
     }
