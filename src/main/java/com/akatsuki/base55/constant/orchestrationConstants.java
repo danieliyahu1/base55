@@ -8,7 +8,7 @@ public class orchestrationConstants {
 
     The JSON object must contain two fields:
     1. 'analysis': A string describing the overall plan for the workflow.
-    2. 'WorkflowSteps': A list of 'WorkflowStep' objects, representing the sequential, successful path.
+    2. 'WorkflowSteps': A list of 'WorkflowStep' objects, representing the sequential, successful paths, similar to a tree with one root and each leaf is a result that came from different way, you decide the number of leaf based on the task.
 
     Here is the definition of a 'WorkflowStep' object:
     - id: String (A unique identifier for the step)
@@ -17,90 +17,73 @@ public class orchestrationConstants {
     - nextSteps: Map<String, String> (A map where the key is the next step's 'id' and the value is the condition to transition to that step. The conditions can be any meaningful string that describes the outcome of the step. If a step has no next step in the successful path, the map should be empty.)
 
     Generate a workflow for the following task:
-    Task: <task>
-
-    Return the output in the specified JSON format, without any additional text or explanation.
-
-    Example of expected output format:
-    <\\{
-        "analysis": "This workflow finds and reserves a flight for a user. It searches for flights first, and then uses the flight details to make a reservation.",
-        "WorkflowSteps": [
-            <\\{
-                "id": "step1_search_flights",
-                "description": "Find available flights based on the user's criteria (origin, destination, dates).",
-                "previousStepResultDependencies": [],
-                "nextSteps": <\\{
-                    "step2_check_availability": "flights_found"
-                \\}>
-            \\}>,
-            ...
-        ]
-    \\}>
+    Task: {task}
     """;
 
     public static final String WORKFLOW_STEP_PROMPT = """
-        You are a system designed to fulfill a single, well-defined step within a larger workflow. 
-        Your task is to process the provided information and generate a concise reply.
-    
-        ---
-        **Input Object Schema (WorkflowStepRequest):**
-        - originalTask: String  
-            The original goal of the workflow.  
-        - stepDescription: String  
-            A short description of the current step to fulfill.  
-        - dependenciesResults: Map<String, String>  
-            Key = dependency step id, Value = result of that step.  
-              This map may be empty if this step does not depend on any previous steps.
-    
-        ---
-        **Actual Input Object:**
-        <workflowStepRequest>
-        """;
+    You are a system designed to fulfill a single, well-defined step within a larger workflow.
+    Your task is to process the provided information and generate a concise reply.
+
+    ---
+    **Input Object Schema (WorkflowStepRequest):**
+    - originalTask: String
+        The original goal of the workflow.
+    - stepDescription: String
+        A short description of the current step to fulfill.
+    - dependenciesResults: Map<String, String>
+        Key = dependency step id, Value = result of that step.
+          This map may be empty if this step does not depend on any previous steps.
+
+    ---
+    **Actual Input Object:**
+    {workflowStepRequest}
+    """;
 
     public static final String DETERMINE_NEXT_STEP_PROMPT = """
-        You are a workflow orchestrator AI.
-        
-        Your job is to select the next step to execute in a workflow based on the information provided in an input object.
-        
-        ---
-        
-        **Input Object Schema (OrchestratorNextStepRequest):**
-        - originalTask: String — The overall goal of the workflow.
-        - description: String — Description of the current step to fulfill.
-        - stepResult: String — The result of completing the current step.
-        - candidates: Map<String, String> — Key = next step id, Value = condition describing when this step should be executed.
-        
-        ---
-        
-        **Instructions:**
-        1. Analyze the stepResult in the context of the current step description and the originalTask.
-        2. Compare it against the conditions for each candidate next step.
-        3. Pick the step that is most relevant based on the stepResult and the candidate conditions.
-        4. Respond ONLY in JSON with the following fields:
-           <\\{
-             "id": "<id of chosen next step>",
-             "reason": "<short explanation of why this step was chosen>"
-           \\}>
-        5. Do NOT include any extra text, explanation, or formatting.
-        
-        ---
-        
-        **Example:**
-        Input Object:
-        <\\{
-          "originalTask": "Find and reserve a flight for a user",
-          "description": "Search for available flights",
-          "stepResult": "flights found",
-          "candidates": <\\{
-            "step2_check_availability": "flights_found",
-            "step2_error_handling": "no_flights"
-          \\}>
-        \\}>
-        
-        Response:
-        <\\{
-          "id": "step2_check_availability",
-          "reason": "The step result indicates flights were found, matching the condition for this step."
-        \\}>
+    You are a workflow orchestrator AI.
+
+    Your job is to select the next step to execute in a workflow based on the information provided in an input object.
+
+    ---
+
+    **Input Object Schema (OrchestratorNextStepRequest):**
+    - originalTask: String — The overall goal of the workflow.
+    - description: String — Description of the current step to fulfill.
+    - stepResult: String — The result of completing the current step.
+    - candidates: Map<String, String> — Key = next step id, Value = condition describing when this step should be executed.
+
+    ---
+
+    **Instructions:**
+    1. Analyze the stepResult in the context of the current step description and the originalTask.
+    2. Compare it against the conditions for each candidate next step.
+    3. Pick the step that is most relevant based on the stepResult and the candidate conditions.
+    
+    ---
+    """;
+
+    public static final String GENERATE_WORKFLOW_PROMPT = """
+        You are an AI assistant that helps design agent workflows.
+
+        The user has the following goal:
+        {primaryGoal}
+
+        And the following secondary goals:
+        {secondaryGoals}
+
+        Your task is to break this goal into a high-level workflow consisting of discrete steps.
+        For each step, provide:
+        - A unique step id
+        - A concise description of the task the agent must perform
+        - A list of conceptual data required by this step (requiredData). This is not actual data, just what the step depends on.
+
+        Additionally, provide a high-level analysis of the workflow, explaining how the steps work together to achieve the user's goal.
+
+        Optional: Include multiple alternative steps if there are different ways to accomplish the same task.
+
+        Notes:
+        - Focus on high-level tasks only, do not generate execution details.
+        - Consider optional steps if applicable.
+        - Use meaningful descriptions and data dependency hints for tool selection.
         """;
 }

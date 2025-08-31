@@ -1,9 +1,13 @@
 package com.akatsuki.base55.controller;
 
+import com.akatsuki.base55.domain.workflow.Workflow;
 import com.akatsuki.base55.dto.AiRequestDTO;
 import com.akatsuki.base55.dto.AiResponseDTO;
 import com.akatsuki.base55.service.Base55Service;
+import io.modelcontextprotocol.spec.McpSchema;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/base55")
@@ -15,13 +19,13 @@ public class Base55Controller {
         this.base55Service = base55Service;
     }
 
-    @PostMapping("/ask")
-    public AiResponseDTO askLlm(@RequestBody AiRequestDTO request) {
-        return base55Service.askLlm(request);
+    @PostMapping("/generate-tasks")
+    public Workflow generateAgentTasks(@RequestBody AiRequestDTO request){
+        return base55Service.generateAgentTasks(request.getPrompt());
     }
 
-    @PostMapping("/execute")
-    public AiResponseDTO executeTask(@RequestBody AiRequestDTO request){
-        return base55Service.executeTask(request.getPrompt());
+    @PostMapping("/filter-tools")
+    public List<McpSchema.Tool> filterTools(@RequestBody AiRequestDTO request){
+        return base55Service.getFilteredTools(request.getPrompt());
     }
 }
