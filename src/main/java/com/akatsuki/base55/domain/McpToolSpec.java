@@ -6,9 +6,10 @@ public record McpToolSpec(
         UUID id,
         String name,
         String description,
+        String rationale,
         String serverName
 ) {
-    public McpToolSpec(String name, String description, String serverName) {
-        this(UUID.randomUUID(), name, description, serverName);
+    public McpToolSpec(String name, String description, String rationale, String serverName) {
+        this(UUID.randomUUID(), name, description, rationale, serverName);
     }
 }

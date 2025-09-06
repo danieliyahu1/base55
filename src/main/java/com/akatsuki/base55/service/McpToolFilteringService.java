@@ -82,7 +82,7 @@ public class McpToolFilteringService {
     private List<McpToolSpec> getAllToolsFromAllMcpClients(){
         return mcpSyncClients.stream()
                 .flatMap(mcpSyncClient -> mcpSyncClient.listTools().tools().stream(
-                ).map(tool -> new McpToolSpec(tool.name(), tool.description(), mcpSyncClient.getServerInfo().name())
+                ).map(tool -> new McpToolSpec(tool.name(), tool.description(), "", mcpSyncClient.getServerInfo().name())
                 ))
                 .collect(Collectors.toList());
     }
@@ -102,10 +102,19 @@ public class McpToolFilteringService {
                 .filter(ToolEvaluation::isRequired)
                 .map(toolEvaluation -> new McpToolSpec(
                         getToolNameById(toolEvaluation.id()),
+                        getToolDescriptionById(toolEvaluation.id()),
                         toolEvaluation.rationale(),
                         getServerNameById(toolEvaluation.id()
                 )))
                 .collect(Collectors.toList());
+    }
+
+    private String getToolDescriptionById(UUID id) {
+        return mcpToolSpecs.stream()
+                .filter(tool -> tool.id().equals(id))
+                .findFirst()
+                .map(McpToolSpec::description)
+                .orElseThrow(); //********************************needs to create custom exception
     }
 
     private String getToolNameById(UUID id){
