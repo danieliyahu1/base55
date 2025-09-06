@@ -1,5 +1,7 @@
 package com.akatsuki.base55.constant;
 
+import java.util.List;
+
 public class orchestrationConstants {
 
     public static final String WORKFLOW_PROMPT = """
@@ -62,18 +64,12 @@ public class orchestrationConstants {
     ---
     """;
 
-    public static final String GENERATE_WORKFLOW_PROMPT = """
-        You are an AI assistant that helps design agent workflows.
+    // --- workflow generation ---
 
-        The user has the following goal:
-        {primaryGoal}
-
-        And the following secondary goals:
-        {secondaryGoals}
-
-        Your task is to break this goal into a high-level workflow consisting of discrete steps.
+    public static final String GENERATE_WORKFLOW_PROMPT = """  
+        Your task is to break this goal into a high-level workflow consisting of discrete steps that an AI agent should perform to accomplish the task.
         For each step, provide:
-        - A unique step id
+        - id
         - A concise description of the task the agent must perform
         - A list of conceptual data required by this step (requiredData). This is not actual data, just what the step depends on.
 
@@ -85,5 +81,38 @@ public class orchestrationConstants {
         - Focus on high-level tasks only, do not generate execution details.
         - Consider optional steps if applicable.
         - Use meaningful descriptions and data dependency hints for tool selection.
+        
+        The user has the following goal:
+        {primaryGoal}
+
+        And the following secondary goals:
+        {secondaryGoals}
         """;
+
+    public static final String WORKFLOW_LLM_ROLE = "You are an AI assistant that helps design agent workflows.";
+
+    // --- user intent parsing ---
+
+    public static final String USER_INTENT_ROLE = "You are an expert at understanding user needs, even when their words are unclear or don't fully express their true intent.";
+
+    public static final String USER_INTENT_TASK_DESCRIPTION = """
+        Extract the primary goal of the task (what outcome the agent must achieve) and secondary goals that the AI agent should have in order to be able to execute the task.
+        Task: {task}
+        """;
+
+    // --- tool filtering --
+    public static final String TOOL_FILTERING_LLM_ROLE = "You are an expert at analyzing workflows and selecting the most relevant tools to accomplish each step.";
+    public static final String TOOL_FILTERING_TASK_DESCRIPTION = """
+    For the following workflow step, analyze all available tools and decide which ones are most relevant. Provide a structured response with the following information for each relevant tool:
+    - The tool's ID.
+    - A brief explanation of why the tool is a good fit for the step.
+    - The specific function or purpose of the tool that matches the step's requirements.
+    
+    Step: {step}
+    
+    Available tools:
+    
+    {tools}
+    """;
+
 }

@@ -1,5 +1,6 @@
 package com.akatsuki.base55.controller;
 
+import com.akatsuki.base55.domain.McpToolSpec;
 import com.akatsuki.base55.domain.workflow.Workflow;
 import com.akatsuki.base55.dto.AiRequestDTO;
 import com.akatsuki.base55.dto.AiResponseDTO;
@@ -8,6 +9,8 @@ import io.modelcontextprotocol.spec.McpSchema;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/base55")
@@ -25,7 +28,7 @@ public class Base55Controller {
     }
 
     @PostMapping("/filter-tools")
-    public List<McpSchema.Tool> filterTools(@RequestBody AiRequestDTO request){
+    public Map<String, List<McpToolSpec>> filterTools(@RequestBody AiRequestDTO request){
         return base55Service.getFilteredTools(request.getPrompt());
     }
 }

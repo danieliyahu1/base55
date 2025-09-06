@@ -7,7 +7,7 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import static com.akatsuki.base55.constant.orchestrationConstants.GENERATE_WORKFLOW_PROMPT;
+import static com.akatsuki.base55.constant.orchestrationConstants.*;
 
 @Slf4j
 @Service
@@ -22,6 +22,7 @@ public class AgentTasksGeneratorService {
         UserPromptIntent userIntent = userIntentParsing(task);
         log.info("User Intent: Primary Goal - {}, Secondary Goals - {}", userIntent.primaryGoal(), userIntent.secondaryGoals());
         return this.groqChatClient.prompt()
+                .system(s -> s.text(WORKFLOW_LLM_ROLE))
                 .user(u -> u.text(GENERATE_WORKFLOW_PROMPT)
                         .param("primaryGoal", userIntent.primaryGoal())
                         .param("secondaryGoals", String.join(", ", userIntent.secondaryGoals())))
@@ -31,7 +32,8 @@ public class AgentTasksGeneratorService {
 
     private UserPromptIntent userIntentParsing(String task){
         return this.groqChatClient.prompt()
-                .user(u -> u.text("understand the user’s request. Extract the primary goal of the (what outcome the agent must achieve) and secondary goals that the ai agent should have in order to be able to execute the task. : {task}")
+                .system(s -> s.text(USER_INTENT_ROLE))
+                .user(u -> u.text(USER_INTENT_TASK_DESCRIPTION)
                         .param("task", task))
                 .call()
                 .entity(UserPromptIntent.class);
