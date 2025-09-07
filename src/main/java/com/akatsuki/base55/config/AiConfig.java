@@ -32,14 +32,6 @@ public class AiConfig {
     }
 
     @Bean
-    @Qualifier("huggingFaceChatClient")
-    public ChatClient huggingFaceChatClient(
-            @Qualifier("huggingfaceChatModel") HuggingfaceChatModel huggingfaceChatModel) {
-        return ChatClient.builder(huggingfaceChatModel)
-                .build();
-    }
-
-    @Bean
     @Qualifier("openRouterChatModel")
     public ChatModel openRouterChatModel(
             @Value("${openrouter.api.key}") String apiKey,

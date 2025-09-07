@@ -14,7 +14,7 @@ import static com.akatsuki.base55.constant.orchestrationConstants.*;
 public class AgentTasksGeneratorService {
     private final ChatClient groqChatClient;
 
-    public AgentTasksGeneratorService(@Qualifier("groqChatClient") ChatClient groqChatClient) {
+    public AgentTasksGeneratorService(@Qualifier("openRouterChatClient") ChatClient groqChatClient) {
         this.groqChatClient = groqChatClient;
     }
 
