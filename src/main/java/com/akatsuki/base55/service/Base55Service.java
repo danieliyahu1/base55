@@ -2,13 +2,11 @@ package com.akatsuki.base55.service;
 
 import com.akatsuki.base55.domain.McpToolSpec;
 import com.akatsuki.base55.domain.workflow.Workflow;
-import io.modelcontextprotocol.spec.McpSchema;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Slf4j
 @Service

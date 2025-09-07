@@ -3,14 +3,14 @@ package com.akatsuki.base55.controller;
 import com.akatsuki.base55.domain.McpToolSpec;
 import com.akatsuki.base55.domain.workflow.Workflow;
 import com.akatsuki.base55.dto.AiRequestDTO;
-import com.akatsuki.base55.dto.AiResponseDTO;
 import com.akatsuki.base55.service.Base55Service;
-import io.modelcontextprotocol.spec.McpSchema;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/base55")

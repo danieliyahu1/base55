@@ -6,7 +6,6 @@ import com.akatsuki.base55.domain.workflow.Workflow;
 import com.akatsuki.base55.domain.workflow.step.WorkflowStep;
 import com.akatsuki.base55.dto.McpToolSpecDTO;
 import io.modelcontextprotocol.client.McpSyncClient;
-import io.modelcontextprotocol.spec.McpSchema;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,8 +17,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.akatsuki.base55.constant.orchestrationConstants.TOOL_FILTERING_LLM_ROLE;
-import static com.akatsuki.base55.constant.orchestrationConstants.TOOL_FILTERING_TASK_DESCRIPTION;
+import static com.akatsuki.base55.constant.OrchestrationConstants.TOOL_FILTERING_LLM_ROLE;
+import static com.akatsuki.base55.constant.OrchestrationConstants.TOOL_FILTERING_TASK_DESCRIPTION;
 
 @Slf4j
 @Service
@@ -39,13 +38,11 @@ public class McpToolFilteringService {
         log.info("Filtering tools for workflow with {} steps", workflow.WorkflowSteps().size());
         log.info("Using MCP clients: {}", mcpSyncClients.stream()
                 .map(McpSyncClient::getServerInfo));
-        Map<String, List<McpToolSpec>> toolsByStep = workflow.WorkflowSteps().stream()
-                .peek(step -> log.info("Processing workflow step: {}", step.task()))
+        return workflow.WorkflowSteps().stream()
                 .collect(Collectors.toMap(
                         WorkflowStep::task,
                         this::getListOfToolsForWorkflowStep
                 ));
-        return toolsByStep;
     }
 
     private List<McpToolSpec> getListOfToolsForWorkflowStep(WorkflowStep step){
@@ -84,7 +81,7 @@ public class McpToolFilteringService {
                 .flatMap(mcpSyncClient -> mcpSyncClient.listTools().tools().stream(
                 ).map(tool -> new McpToolSpec(tool.name(), tool.description(), "", mcpSyncClient.getServerInfo().name())
                 ))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<McpToolSpecDTO> getToolDTOList(){
@@ -94,7 +91,7 @@ public class McpToolFilteringService {
                         tool.name(),
                         tool.description()
                 ))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<McpToolSpec> convertToolEvaluationToMcpToolSpec(List<ToolEvaluation> toolEvaluations){
@@ -106,7 +103,7 @@ public class McpToolFilteringService {
                         toolEvaluation.rationale(),
                         getServerNameById(toolEvaluation.id()
                 )))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private String getToolDescriptionById(UUID id) {

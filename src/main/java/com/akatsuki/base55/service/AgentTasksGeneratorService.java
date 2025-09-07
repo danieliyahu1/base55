@@ -7,7 +7,7 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import static com.akatsuki.base55.constant.orchestrationConstants.*;
+import static com.akatsuki.base55.constant.OrchestrationConstants.*;
 
 @Slf4j
 @Service

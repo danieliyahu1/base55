@@ -18,8 +18,7 @@ import org.springframework.context.annotation.Configuration;
 public class AiConfig {
 
     @Bean
-    @Qualifier("groqChatClient")
-    public ChatClient openAiChatClient(
+    public ChatClient groqChatClient(
             @Qualifier("openAiChatModel") ChatModel openAiChatModel,
             ToolCallbackProvider toolCallbackProvider) {
 
@@ -32,7 +31,6 @@ public class AiConfig {
     }
 
     @Bean
-    @Qualifier("openRouterChatModel")
     public ChatModel openRouterChatModel(
             @Value("${openrouter.api.key}") String apiKey,
             @Value("${openrouter.base.url}") String baseUrl,
@@ -56,7 +54,6 @@ public class AiConfig {
     }
 
     @Bean
-    @Qualifier("openRouterChatClient")
     public ChatClient openRouterChatClient(
             @Qualifier("openRouterChatModel") ChatModel openRouterChatModel) {
 

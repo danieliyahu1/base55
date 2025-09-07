@@ -1,8 +1,10 @@
 package com.akatsuki.base55.constant;
 
-import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-public class orchestrationConstants {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class OrchestrationConstants {
 
     public static final String WORKFLOW_PROMPT = """
     You are a system designed to generate a sequential workflow to accomplish a task.
