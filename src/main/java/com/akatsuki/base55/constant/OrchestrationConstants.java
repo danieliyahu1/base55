@@ -69,7 +69,7 @@ public class OrchestrationConstants {
     // --- workflow generation ---
 
     public static final String GENERATE_WORKFLOW_PROMPT = """  
-        Your task is to break this goal into a high-level workflow consisting of discrete steps that an AI agent should perform to accomplish the task.
+        Your task is to break this goal into a high-level workflow consisting of discrete steps that an AI agent should perform to accomplish the different tasks the user will want.
         For each step, provide:
         - id
         - A concise description of the task the agent must perform

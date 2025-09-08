@@ -12,6 +12,10 @@
         "@playwright/mcp@latest",
         "--isolated"
       ]
+    },
+    "time": {
+      "command": "uvx",
+      "args": ["mcp-server-time"]
     }
   }
 }
