@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class OrchestrationConstants {
+public class PlatformConstants {
 
     public static final String WORKFLOW_PROMPT = """
     You are a system designed to generate a sequential workflow to accomplish a task.
