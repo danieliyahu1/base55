@@ -5,17 +5,15 @@ import com.akatsuki.base55.domain.ToolEvaluation;
 import com.akatsuki.base55.domain.workflow.Workflow;
 import com.akatsuki.base55.domain.workflow.step.WorkflowStep;
 import com.akatsuki.base55.dto.McpToolSpecDTO;
-import io.modelcontextprotocol.client.McpSyncClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static com.akatsuki.base55.constant.OrchestrationConstants.TOOL_FILTERING_LLM_ROLE;
 import static com.akatsuki.base55.constant.OrchestrationConstants.TOOL_FILTERING_TASK_DESCRIPTION;
@@ -25,28 +23,27 @@ import static com.akatsuki.base55.constant.OrchestrationConstants.TOOL_FILTERING
 public class McpToolFilteringService {
 
     private final ChatClient groqChatClient;
-    private final List<McpSyncClient> mcpSyncClients;
     private final List<McpToolSpec> mcpToolSpecs;
+    private final ToolCallbackProvider toolCallbackProvider;
     public McpToolFilteringService(@Qualifier("groqChatClient") ChatClient groqChatClient,
-                                   List<McpSyncClient> mcpSyncClients) {
+                                   ToolCallbackProvider toolCallbackProvider) {
         this.groqChatClient = groqChatClient;
-        this.mcpSyncClients = mcpSyncClients;
-        this.mcpToolSpecs = this.getAllToolsFromAllMcpClients();
+        this.toolCallbackProvider = toolCallbackProvider;
+        this.mcpToolSpecs = this.getAllToolsFromToolCallbackProvider();
     }
 
-    public Map<String, List<McpToolSpec>> getFilteredTools(Workflow workflow) {
+    public ToolCallbackProvider getFilteredCallBackTools(Workflow workflow) {
         log.info("Filtering tools for workflow with {} steps", workflow.WorkflowSteps().size());
-        log.info("Using MCP clients: {}", mcpSyncClients.stream()
-                .map(McpSyncClient::getServerInfo));
-        return workflow.WorkflowSteps().stream()
-                .collect(Collectors.toMap(
-                        WorkflowStep::task,
-                        this::getListOfToolsForWorkflowStep
-                ));
+
+        List<McpToolSpec> filteredMcpToolSpecs =  workflow.WorkflowSteps().stream()
+                .flatMap(step -> getListOfToolsForWorkflowStep(step).stream())
+                .distinct()
+                .toList();
+
+        return createToolCallbackProviderFromMcpToolSpecs(filteredMcpToolSpecs);
     }
 
     private List<McpToolSpec> getListOfToolsForWorkflowStep(WorkflowStep step){
-        // 2️⃣ Build the LLM prompt
         StringBuilder prompt = new StringBuilder();
         prompt.append("You are an AI assistant. For the following workflow steps, analyze all the available tools and decide for each tool:\n\n");
         prompt.append("- Step: ").append(step.task()).append("\n");
@@ -60,7 +57,6 @@ public class McpToolFilteringService {
             prompt.append("  Description: ").append(tool.description()).append("\n");
         });
 
-        // 3️⃣ Call the ChatClient (LLM)
         ToolEvaluation[] response = groqChatClient
                 .prompt(prompt.toString())
                 .system(s -> s.text(TOOL_FILTERING_LLM_ROLE))
@@ -76,12 +72,11 @@ public class McpToolFilteringService {
         return convertToolEvaluationToMcpToolSpec(Arrays.stream(response).toList());
     }
 
-    private List<McpToolSpec> getAllToolsFromAllMcpClients(){
-        return mcpSyncClients.stream()
-                .flatMap(mcpSyncClient -> mcpSyncClient.listTools().tools().stream(
-                ).map(tool -> new McpToolSpec(tool.name(), tool.description(), "", mcpSyncClient.getServerInfo().name())
-                ))
-                .toList();
+    private List<McpToolSpec> getAllToolsFromToolCallbackProvider(){
+        return Arrays.stream(toolCallbackProvider.getToolCallbacks()).map(tool -> new McpToolSpec(
+                tool.getToolDefinition().name(),
+                tool.getToolDefinition().description()
+        )).toList();
     }
 
     private List<McpToolSpecDTO> getToolDTOList(){
@@ -99,10 +94,8 @@ public class McpToolFilteringService {
                 .filter(ToolEvaluation::isRequired)
                 .map(toolEvaluation -> new McpToolSpec(
                         getToolNameById(toolEvaluation.id()),
-                        getToolDescriptionById(toolEvaluation.id()),
-                        toolEvaluation.rationale(),
-                        getServerNameById(toolEvaluation.id()
-                )))
+                        getToolDescriptionById(toolEvaluation.id())
+                ))
                 .toList();
     }
 
@@ -122,11 +115,13 @@ public class McpToolFilteringService {
                 .orElseThrow(); //********************************needs to create custom exception
     }
 
-    private String getServerNameById(UUID id){
-        return mcpToolSpecs.stream()
-                .filter(tool -> tool.id().equals(id))
-                .findFirst()
-                .map(McpToolSpec::serverName)
-                .orElseThrow(); //********************************needs to create custom exception
+    private ToolCallbackProvider createToolCallbackProviderFromMcpToolSpecs(List<McpToolSpec> mcpToolSpec){
+        return ToolCallbackProvider.from(
+                Arrays.stream(toolCallbackProvider.getToolCallbacks()).filter(
+                                tool -> mcpToolSpec.stream().anyMatch(spec -> spec.name().equals(tool.getToolDefinition().name())
+                                        && spec.description().equals(tool.getToolDefinition().description()))
+                        )
+                        .toList()
+        );
     }
 }

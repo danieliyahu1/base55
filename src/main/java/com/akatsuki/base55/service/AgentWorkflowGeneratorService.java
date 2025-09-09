@@ -11,10 +11,10 @@ import static com.akatsuki.base55.constant.OrchestrationConstants.*;
 
 @Slf4j
 @Service
-public class AgentTasksGeneratorService {
+public class AgentWorkflowGeneratorService {
     private final ChatClient groqChatClient;
 
-    public AgentTasksGeneratorService(@Qualifier("openRouterChatClient") ChatClient groqChatClient) {
+    public AgentWorkflowGeneratorService(@Qualifier("openRouterChatClient") ChatClient groqChatClient) {
         this.groqChatClient = groqChatClient;
     }
 

@@ -95,7 +95,7 @@ public class OrchestrationConstants {
 
     // --- user intent parsing ---
 
-    public static final String USER_INTENT_ROLE = "You are an expert at understanding user needs, even when their words are unclear or don't fully express their true intent.";
+    public static final String USER_INTENT_ROLE = "You are an expert at extracting user needs from their prompt, even when their words are unclear or don't fully express their true intent.";
 
     public static final String USER_INTENT_TASK_DESCRIPTION = """
         Extract the primary goal of the task (what outcome the agent must achieve) and secondary goals that the AI agent should have in order to be able to execute the task.
@@ -117,4 +117,21 @@ public class OrchestrationConstants {
     {tools}
     """;
 
+    public static final String EVALUATION_PROMPT = """
+            User's original goal: {prompt}
+            Text to evaluate: {result}
+            """;
+
+    public static final String EVALUATION_SYSTEM_ROLE = """
+            You are an evaluation agent for an automated system. Your task is to review a given response and verify that it is correct and meets the expected criteria.
+
+            Your response MUST be a single JSON object. Do not include any other text, explanations, or markdown formatting outside of the JSON object itself.
+
+            The JSON object must have two fields:
+            - `result`: A boolean value (`true` or `false`) indicating if the text meets the criteria.
+            - `reason`: A string explaining the reason for the evaluation outcome. The reason should be concise and direct.
+
+            ### Criteria to Evaluate:
+            The text must be factually accurate and relevant to the user's query.
+            """;
 }
