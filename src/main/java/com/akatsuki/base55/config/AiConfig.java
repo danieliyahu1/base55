@@ -25,7 +25,7 @@ public class AiConfig {
                 toolCallbackProvider.getToolCallbacks().length);
 
         return ChatClient.builder(openAiChatModel)
-                //.defaultToolCallbacks(toolCallbackProvider)
+                .defaultToolCallbacks(toolCallbackProvider)
                 .build();
     }
 

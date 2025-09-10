@@ -1,6 +1,7 @@
 package com.akatsuki.base55.controller;
 
 import com.akatsuki.base55.domain.McpToolSpec;
+import com.akatsuki.base55.domain.SubTask;
 import com.akatsuki.base55.domain.workflow.Workflow;
 import com.akatsuki.base55.dto.AiRequestDTO;
 import com.akatsuki.base55.service.Base55Service;
@@ -37,5 +38,10 @@ public class Base55Controller {
     @GetMapping("/tools")
     public ToolCallback[] getAllTools(){
         return toolCallbackProvider.getToolCallbacks();
+    }
+
+    @PostMapping("/decompose-task")
+    public SubTask decomposeTask(@RequestBody AiRequestDTO request){
+        return base55Service.decomposeTask(request.getPrompt());
     }
 }

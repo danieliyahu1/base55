@@ -1,6 +1,6 @@
 package com.akatsuki.base55.agent;
 
-import org.springframework.ai.tool.ToolCallbackProvider;
+import com.akatsuki.base55.domain.SubTask;
 
 import java.util.UUID;
 
@@ -10,10 +10,14 @@ public class AiAgent {
     private final SubTaskExecutor subTaskExecutor;
     private final ResultEvaluator resultEvaluator;
 
-    public AiAgent(TaskDecomposer taskDecomposer, ToolCallbackProvider toolCallbackProvider, ResultEvaluator resultEvaluator) {
+    public AiAgent(TaskDecomposer taskDecomposer, SubTaskExecutor subTaskExecutor, ResultEvaluator resultEvaluator) {
         this.agentId = UUID.randomUUID();
         this.taskDecomposer = taskDecomposer;
-        this.subTaskExecutor = new SubTaskExecutor(toolCallbackProvider);
+        this.subTaskExecutor = subTaskExecutor;
         this.resultEvaluator = resultEvaluator;
+    }
+
+    public SubTask decomposeTask(String task, String currentState) {
+        return taskDecomposer.decomposeTask(task, currentState);
     }
 }
