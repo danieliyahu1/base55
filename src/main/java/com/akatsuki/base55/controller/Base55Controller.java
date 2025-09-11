@@ -3,6 +3,8 @@ package com.akatsuki.base55.controller;
 import com.akatsuki.base55.domain.SubTask;
 import com.akatsuki.base55.domain.workflow.Workflow;
 import com.akatsuki.base55.dto.AiRequestDTO;
+import com.akatsuki.base55.exception.Base55Exception;
+import com.akatsuki.base55.exception.ToolNotFoundException;
 import com.akatsuki.base55.service.Base55Service;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
@@ -29,7 +31,7 @@ public class Base55Controller {
     }
 
     @PostMapping("/filter-tools")
-    public ToolCallbackProvider filterTools(@RequestBody AiRequestDTO request) {
+    public ToolCallbackProvider filterTools(@RequestBody AiRequestDTO request) throws ToolNotFoundException {
         return base55Service.getFilteredTools(request.getPrompt());
     }
 
@@ -39,7 +41,7 @@ public class Base55Controller {
     }
 
     @PostMapping("/create-agent")
-    public Map<String, Object> createAgent(@RequestBody String task) {
+    public Map<String, Object> createAgent(@RequestBody String task) throws Base55Exception {
         return base55Service.createAgent(task);
     }
 }

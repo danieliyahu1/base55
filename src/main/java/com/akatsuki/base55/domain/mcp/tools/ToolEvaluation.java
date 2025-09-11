@@ -1,4 +1,4 @@
-package com.akatsuki.base55.domain;
+package com.akatsuki.base55.domain.mcp.tools;
 
 import java.util.UUID;
 

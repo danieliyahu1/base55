@@ -18,14 +18,8 @@ public class AiConfig {
 
     @Bean
     public ChatClient groqChatClient(
-            @Qualifier("openAiChatModel") ChatModel openAiChatModel,
-            ToolCallbackProvider toolCallbackProvider) {
-
-        log.info("Registering OpenAI ChatClient with {} tool callbacks",
-                toolCallbackProvider.getToolCallbacks().length);
-
+            @Qualifier("openAiChatModel") ChatModel openAiChatModel) {
         return ChatClient.builder(openAiChatModel)
-                .defaultToolCallbacks(toolCallbackProvider)
                 .build();
     }
 
@@ -54,9 +48,14 @@ public class AiConfig {
 
     @Bean
     public ChatClient openRouterChatClient(
-            @Qualifier("openRouterChatModel") ChatModel openRouterChatModel) {
+            @Qualifier("openRouterChatModel") ChatModel openRouterChatModel,
+            ToolCallbackProvider toolCallbackProvider) {
+
+        log.info("Registering OpenAI ChatClient with {} tool callbacks",
+                toolCallbackProvider.getToolCallbacks().length);
 
         return ChatClient.builder(openRouterChatModel)
+                .defaultToolCallbacks(toolCallbackProvider)
                 .build();
     }
 

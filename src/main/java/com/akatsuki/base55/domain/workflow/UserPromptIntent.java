@@ -1,4 +1,4 @@
-package com.akatsuki.base55.domain;
+package com.akatsuki.base55.domain.workflow;
 
 import java.util.List;
 

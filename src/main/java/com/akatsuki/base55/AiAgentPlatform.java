@@ -4,6 +4,7 @@ import com.akatsuki.base55.agent.AgentFactory;
 import com.akatsuki.base55.agent.AiAgent;
 import com.akatsuki.base55.domain.AiAgentConfig;
 import com.akatsuki.base55.domain.workflow.Workflow;
+import com.akatsuki.base55.exception.ToolNotFoundException;
 import com.akatsuki.base55.service.AgentWorkflowGeneratorService;
 import com.akatsuki.base55.service.McpToolFilteringService;
 import org.springframework.ai.tool.ToolCallbackProvider;
@@ -26,7 +27,7 @@ public class AiAgentPlatform {
         this.agentFactory = agentFactory;
     }
 
-    public Map<String, Object> createAgent(String task) {
+    public Map<String, Object> createAgent(String task) throws ToolNotFoundException {
         Workflow workflow = agentWorkflowGeneratorService.generateAgentWorkflow(task);
         ToolCallbackProvider toolCallbackProvider = mcpToolFilteringService.getFilteredCallBackTools(workflow);
         AiAgent agent =  agentFactory.createAgent(
@@ -43,7 +44,7 @@ public class AiAgentPlatform {
         return agentWorkflowGeneratorService.generateAgentWorkflow(task);
     }
 
-    public ToolCallbackProvider getFilteredTools(String task) {
+    public ToolCallbackProvider getFilteredTools(String task) throws ToolNotFoundException {
         return this.mcpToolFilteringService.getFilteredCallBackTools(
                 this.agentWorkflowGeneratorService.generateAgentWorkflow(task));
     }

@@ -1,6 +1,6 @@
 package com.akatsuki.base55.service;
 
-import com.akatsuki.base55.domain.UserPromptIntent;
+import com.akatsuki.base55.domain.workflow.UserPromptIntent;
 import com.akatsuki.base55.domain.workflow.Workflow;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
@@ -14,7 +14,7 @@ import static com.akatsuki.base55.constant.PlatformConstants.*;
 public class AgentWorkflowGeneratorService {
     private final ChatClient groqChatClient;
 
-    public AgentWorkflowGeneratorService(@Qualifier("openRouterChatClient") ChatClient groqChatClient) {
+    public AgentWorkflowGeneratorService(@Qualifier("groqChatClient") ChatClient groqChatClient) {
         this.groqChatClient = groqChatClient;
     }
 
