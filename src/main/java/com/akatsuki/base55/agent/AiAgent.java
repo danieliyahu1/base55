@@ -1,11 +1,10 @@
 package com.akatsuki.base55.agent;
 
 import com.akatsuki.base55.domain.SubTask;
+import com.akatsuki.base55.domain.agent.AiAgentMetadata;
 import lombok.Getter;
 
 import java.util.UUID;
-
-import static com.akatsuki.base55.constant.AgentConstants.FIRST_DECOMPOSITION;
 
 public class AiAgent {
 
@@ -17,9 +16,9 @@ public class AiAgent {
     private final SubTaskExecutor subTaskExecutor;
     private final ResultEvaluator resultEvaluator;
 
-    public AiAgent(String agentDescription, TaskDecomposer taskDecomposer, SubTaskExecutor subTaskExecutor, ResultEvaluator resultEvaluator) {
-        this.agentId = UUID.randomUUID();
-        this.agentDescription = agentDescription;
+    public AiAgent(AiAgentMetadata aiAgentMetadata, TaskDecomposer taskDecomposer, SubTaskExecutor subTaskExecutor, ResultEvaluator resultEvaluator) {
+        this.agentId = aiAgentMetadata.id();
+        this.agentDescription = aiAgentMetadata.description();
         this.taskDecomposer = taskDecomposer;
         this.subTaskExecutor = subTaskExecutor;
         this.resultEvaluator = resultEvaluator;
