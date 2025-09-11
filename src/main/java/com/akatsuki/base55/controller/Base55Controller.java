@@ -1,6 +1,5 @@
 package com.akatsuki.base55.controller;
 
-import com.akatsuki.base55.domain.McpToolSpec;
 import com.akatsuki.base55.domain.SubTask;
 import com.akatsuki.base55.domain.workflow.Workflow;
 import com.akatsuki.base55.dto.AiRequestDTO;
@@ -10,7 +9,6 @@ import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -25,23 +23,23 @@ public class Base55Controller {
         this.base55Service = base55Service;
     }
 
-    @PostMapping("/generate-tasks")
-    public Workflow generateAgentTasks(@RequestBody AiRequestDTO request){
-        return base55Service.generateAgentTasks(request.getPrompt());
+    @PostMapping("/generate-workflow")
+    public Workflow generateAgentWorkflow(@RequestBody AiRequestDTO request) {
+        return base55Service.generateAgentWorkflow(request.getPrompt());
     }
 
     @PostMapping("/filter-tools")
-    public ToolCallbackProvider filterTools(@RequestBody AiRequestDTO request){
+    public ToolCallbackProvider filterTools(@RequestBody AiRequestDTO request) {
         return base55Service.getFilteredTools(request.getPrompt());
     }
 
     @GetMapping("/tools")
-    public ToolCallback[] getAllTools(){
+    public ToolCallback[] getAllTools() {
         return toolCallbackProvider.getToolCallbacks();
     }
 
-    @PostMapping("/decompose-task")
-    public SubTask decomposeTask(@RequestBody AiRequestDTO request){
-        return base55Service.decomposeTask(request.getPrompt());
+    @PostMapping("/create-agent")
+    public Map<String, Object> createAgent(@RequestBody String task) {
+        return base55Service.createAgent(task);
     }
 }

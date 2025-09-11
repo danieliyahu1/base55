@@ -7,7 +7,7 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import static com.akatsuki.base55.constant.OrchestrationConstants.*;
+import static com.akatsuki.base55.constant.PlatformConstants.*;
 
 @Slf4j
 @Service
@@ -18,7 +18,7 @@ public class AgentWorkflowGeneratorService {
         this.groqChatClient = groqChatClient;
     }
 
-    public Workflow generateAgentTasks(String task){
+    public Workflow generateAgentWorkflow(String task){
         UserPromptIntent userIntent = userIntentParsing(task);
         log.info("User Intent: Primary Goal - {}, Secondary Goals - {}", userIntent.primaryGoal(), userIntent.secondaryGoals());
         return this.groqChatClient.prompt()

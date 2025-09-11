@@ -1,6 +1,6 @@
 package com.akatsuki.base55.agent;
 
-import org.springframework.ai.tool.ToolCallbackProvider;
+import com.akatsuki.base55.domain.AiAgentConfig;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,7 +15,7 @@ public class AgentFactory {
         this.subTaskExecutorFactory = subTaskExecutorFactory;
     }
 
-    public AiAgent createAgent(ToolCallbackProvider toolCallbackProvider) {
-        return new AiAgent(taskDecomposer, subTaskExecutorFactory.create(toolCallbackProvider), resultEvaluator);
+    public AiAgent createAgent(AiAgentConfig aiAgentConfig) {
+        return new AiAgent(aiAgentConfig.agentDescription(), taskDecomposer, subTaskExecutorFactory.create(aiAgentConfig.toolCallbackProvider()), resultEvaluator);
     }
 }

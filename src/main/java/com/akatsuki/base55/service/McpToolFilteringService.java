@@ -15,8 +15,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static com.akatsuki.base55.constant.OrchestrationConstants.TOOL_FILTERING_LLM_ROLE;
-import static com.akatsuki.base55.constant.OrchestrationConstants.TOOL_FILTERING_TASK_DESCRIPTION;
+import static com.akatsuki.base55.constant.PlatformConstants.TOOL_FILTERING_LLM_ROLE;
+import static com.akatsuki.base55.constant.PlatformConstants.TOOL_FILTERING_TASK_DESCRIPTION;
 
 @Slf4j
 @Service

@@ -7,12 +7,11 @@ import lombok.NoArgsConstructor;
 public class PlatformConstants {
 
     public static final String WORKFLOW_PROMPT = """
-    You are a system designed to generate a sequential workflow to accomplish a task.
-    Your output must be a single JSON object.
-
-    The JSON object must contain two fields:
+    You are a system designed to generate a high level workflow of ai agent to accomplish a task.
+    The output must contain three fields:
     1. 'analysis': A string describing the overall plan for the workflow.
-    2. 'WorkflowSteps': A list of 'WorkflowStep' objects, representing the sequential, successful paths, similar to a tree with one root and each leaf is a result that came from different way, you decide the number of leaf based on the task.
+    2. 'aiAgentDescription': summary for the LLM of what the agent role(ignore how it is done).
+    3. 'WorkflowSteps': A list of 'WorkflowStep' objects, representing the sequential, successful paths, similar to a tree with one root and each leaf is a result that came from different way, you decide the number of leaf based on the task.
 
     Here is the definition of a 'WorkflowStep' object:
     - id: String (A unique identifier for the step)
