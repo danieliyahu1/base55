@@ -21,7 +21,6 @@ public class AiAgentMetadataEntity {
     @Column(name = "description", nullable = false)
     private String description;
 
-    // Optional additional metadata fields
     @Column(name = "agent_id", unique = true, nullable = false)
     private UUID agentId;
 

@@ -5,8 +5,9 @@ import java.util.UUID;
 public record McpToolSpec(
         UUID id,
         String name,
-        String description) {
-    public McpToolSpec(String name, String description) {
-        this(UUID.randomUUID(), name, description);
+        String description,
+        String serverName) {
+    public McpToolSpec(String name, String description, String serverName) {
+        this(UUID.randomUUID(), name, description, serverName);
     }
 }

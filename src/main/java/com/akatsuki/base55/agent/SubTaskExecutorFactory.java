@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class SubTaskExecutorFactory {
@@ -17,11 +18,11 @@ public class SubTaskExecutorFactory {
         this.chatModel = chatModel;
     }
 
-    public SubTaskExecutor create(ToolCallback[] toolCallbacks) {
+    public SubTaskExecutor create(List<ToolCallback> toolCallbacks) {
         return new SubTaskExecutor(chatModel, createToolCallbackProviderFromCallbackTools(toolCallbacks));
     }
 
-    private ToolCallbackProvider createToolCallbackProviderFromCallbackTools(ToolCallback[] toolCallbacks){
-        return ToolCallbackProvider.from(Arrays.stream(toolCallbacks).toList());
+    private ToolCallbackProvider createToolCallbackProviderFromCallbackTools(List<ToolCallback> toolCallbacks){
+        return ToolCallbackProvider.from(toolCallbacks);
     }
 }

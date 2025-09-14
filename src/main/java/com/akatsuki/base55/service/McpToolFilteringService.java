@@ -27,13 +27,14 @@ public class McpToolFilteringService {
     private final ToolCallbackProvider toolCallbackProvider;
 
     public McpToolFilteringService(@Qualifier("groqChatClient") ChatClient groqChatClient,
-                                   ToolCallbackProvider toolCallbackProvider) {
+                                   ToolCallbackProvider toolCallbackProvider,
+                                   List<McpToolSpec> mcpToolSpecs) {
         this.groqChatClient = groqChatClient;
         this.toolCallbackProvider = toolCallbackProvider;
-        this.mcpToolSpecs = this.getAllToolsFromToolCallbackProvider();
+        this.mcpToolSpecs = mcpToolSpecs;
     }
 
-    public ToolCallbackProvider getFilteredCallBackTools(Workflow workflow) throws ToolNotFoundException {
+    public List<McpToolSpec> getFilteredCallBackTools(Workflow workflow) throws ToolNotFoundException {
         log.info("Filtering tools for workflow with {} steps", workflow.WorkflowSteps().size());
 
         List<McpToolSpec> filteredMcpToolSpecs = new ArrayList<>();
@@ -48,7 +49,7 @@ public class McpToolFilteringService {
             }
         }
 
-        return createToolCallbackProviderFromMcpToolSpecs(filteredMcpToolSpecs);
+        return filteredMcpToolSpecs;
     }
 
     private List<McpToolSpec> getListOfToolsForWorkflowStep(WorkflowStep step) throws ToolNotFoundException {
@@ -78,13 +79,6 @@ public class McpToolFilteringService {
 
         log.info("LLM Response: {}", response);
         return convertToolEvaluationToMcpToolSpec(Arrays.stream(response).toList());
-    }
-
-    private List<McpToolSpec> getAllToolsFromToolCallbackProvider(){
-        return Arrays.stream(toolCallbackProvider.getToolCallbacks()).map(tool -> new McpToolSpec(
-                tool.getToolDefinition().name(),
-                tool.getToolDefinition().description()
-        )).toList();
     }
 
     private List<McpToolSpecDTO> getToolDTOList(){

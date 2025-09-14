@@ -25,8 +25,17 @@ public class AiAgentConfigEntity {
     @JoinColumn(name = "metadata_id", referencedColumnName = "id")
     private AiAgentMetadataEntity metadata;
 
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "agent_tool",
+            joinColumns = @JoinColumn(name = "agent_id"),
+            inverseJoinColumns = @JoinColumn(name = "tool_id")
+    )
+    private List<McpToolSpecEntity> mcpToolSpecs;
+
     @Builder
-    public AiAgentConfigEntity(AiAgentMetadataEntity metadata) {
+    public AiAgentConfigEntity(AiAgentMetadataEntity metadata, List<McpToolSpecEntity> mcpToolSpecs) {
         this.metadata = metadata;
+        this.mcpToolSpecs = mcpToolSpecs;
     }
 }

@@ -1,6 +1,8 @@
 package com.akatsuki.base55.domain.agent;
 
-import org.springframework.ai.tool.ToolCallback;
+import com.akatsuki.base55.domain.mcp.tools.McpToolSpec;
 
-public record AiAgentConfig(AiAgentMetadata metadata, ToolCallback[] toolCallbacks) {
+import java.util.List;
+
+public record AiAgentConfig(AiAgentMetadata metadata, List<McpToolSpec> mcpToolSpecs) {
 }
