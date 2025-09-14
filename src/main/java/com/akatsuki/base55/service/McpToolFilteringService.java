@@ -60,7 +60,7 @@ public class McpToolFilteringService {
         prompt.append("\nAvailable tools:\n");
 
         mcpToolSpecs.stream().forEach(tool -> {
-            log.info("Tool: {}", tool);
+            log.debug("Tool: {}", tool);
             prompt.append("Id: ").append(tool.id()).append("\n");
             prompt.append("- Name: ").append(tool.name()).append("\n");
             prompt.append("  Description: ").append(tool.description()).append("\n");
@@ -77,7 +77,7 @@ public class McpToolFilteringService {
                 .call()
                 .entity(ToolEvaluation[].class);
 
-        log.info("LLM Response: {}", response);
+        log.debug("LLM Response: {}", response);
         return convertToolEvaluationToMcpToolSpec(Arrays.stream(response).toList());
     }
 

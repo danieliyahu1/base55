@@ -25,7 +25,7 @@ public class AiAgentConfigEntity {
     @JoinColumn(name = "metadata_id", referencedColumnName = "id")
     private AiAgentMetadataEntity metadata;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany
     @JoinTable(
             name = "agent_tool",
             joinColumns = @JoinColumn(name = "agent_id"),
