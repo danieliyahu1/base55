@@ -2,6 +2,7 @@ package com.akatsuki.base55.registry;
 
 import com.akatsuki.base55.domain.ToolRegistryKey;
 import com.akatsuki.base55.domain.mcp.tools.McpToolSpec;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class ToolRegistry {
 
     private final Map<ToolRegistryKey, ToolCallback> registry;
@@ -22,7 +24,7 @@ public class ToolRegistry {
                     .map(spec -> {
                         // Try to find matching ToolCallback
                         Optional<ToolCallback> matching = Arrays.stream(toolCallbackProvider.getToolCallbacks())
-                                .filter(tool -> tool.getToolDefinition().name().equals(spec.name())
+                                .filter(tool -> tool.getToolDefinition().name().contains(spec.name())
                                         && tool.getToolDefinition().description().equals(spec.description()))
                                 .findFirst();
                         // Convert to Map.Entry if found
@@ -35,6 +37,7 @@ public class ToolRegistry {
                     .flatMap(Optional::stream)
                     // Collect into map
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            log.info("Mcp tool registry initialized with {} tools", registry.size());
      }
 
      public Optional<ToolCallback> getToolCallback(String serverName, String toolName) {
