@@ -10,6 +10,21 @@
       "command": "npx",
       "args": ["-y", "gemini-mcp-tool"]
     },
+    "stripe": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@stripe/mcp",
+        "--tools=all"
+      ],
+      "env": {
+        "STRIPE_SECRET_KEY": "${stripe.api.key}"
+      }
+    },
+    "kubernetes": {
+      "command": "npx",
+      "args": ["mcp-server-kubernetes"]
+    },
     "playwright": {
       "command": "npx",
       "args": [
