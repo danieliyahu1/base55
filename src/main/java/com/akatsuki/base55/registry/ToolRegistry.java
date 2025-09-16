@@ -24,7 +24,7 @@ public class ToolRegistry {
                     .map(spec -> {
                         // Try to find matching ToolCallback
                         Optional<ToolCallback> matching = Arrays.stream(toolCallbackProvider.getToolCallbacks())
-                                .filter(tool -> tool.getToolDefinition().name().contains(spec.name())
+                                .filter(tool -> tool.getToolDefinition().name().contains(normalizeToolName(spec.name()))
                                         && tool.getToolDefinition().description().equals(spec.description()))
                                 .findFirst();
                         // Convert to Map.Entry if found
@@ -38,6 +38,7 @@ public class ToolRegistry {
                     // Collect into map
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             log.info("Mcp tool registry initialized with {} tools", registry.size());
+            log.info("Mcp tool specs size: {}", mcpToolSpecs.size());
      }
 
      public Optional<ToolCallback> getToolCallback(String serverName, String toolName) {
@@ -49,5 +50,13 @@ public class ToolRegistry {
                  .map(spec -> getToolCallback(spec.serverName(), spec.name()))
                  .flatMap(Optional::stream)
                  .toList();
+     }
+
+     public ToolCallback[] getAllToolCallbacks() {
+         return registry.values().toArray(new ToolCallback[0]);
+     }
+
+     private String normalizeToolName(String toolName) {
+         return toolName.replace("-", "_");
      }
 }

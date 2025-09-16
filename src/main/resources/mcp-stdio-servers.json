@@ -6,6 +6,10 @@
         "@anaisbetts/mcp-installer"
       ]
     },
+    "gemini-cli": {
+      "command": "npx",
+      "args": ["-y", "gemini-mcp-tool"]
+    },
     "playwright": {
       "command": "npx",
       "args": [
