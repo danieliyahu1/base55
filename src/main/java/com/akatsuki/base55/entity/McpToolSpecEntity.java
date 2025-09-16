@@ -25,7 +25,7 @@ public class McpToolSpecEntity {
     @Column(name = "tool_name", nullable = false)
     private String name;
 
-    @Column(name = "description")
+    @Column(name = "description, length = 1024")
     private String description;
 
     @ManyToMany(mappedBy = "mcpToolSpecs")
