@@ -25,11 +25,84 @@
       "command": "npx",
       "args": ["mcp-server-kubernetes"]
     },
+    "exa": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.exa.ai/mcp?exaApiKey=${exa.api.key}"
+      ]
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "${context7.api.key}"]
+    },
+    "mcp-deepwiki": {
+      "command": "npx",
+      "args": ["-y", "mcp-deepwiki@latest"]
+    },
+    "biomcp": {
+      "command": "uv",
+      "args": ["run", "--with", "biomcp-python", "biomcp", "run"]
+    },
+    "biothings": {
+      "command": "uvx",
+      "args": [
+        "biothings-mcp"
+      ]
+    },
+    "gget-mcp": {
+      "command": "uvx",
+      "args": [
+        "gget-mcp",
+        "stdio"
+      ]
+    },
+    "met-museum": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "metmuseum-mcp"
+      ]
+    },
+    "opengenes-mcp": {
+      "command": "uvx",
+      "args": [
+        "opengenes-mcp",
+        "stdio"
+      ]
+    },
+    "opengenes-mcp": {
+      "command": "uvx",
+      "args": [
+        "synergy-age-mcp"
+      ]
+    },
+    "bilibili-search": {
+      "command": "npx",
+      "args": ["bilibili-mcp"]
+    },
     "playwright": {
       "command": "npx",
       "args": [
         "@playwright/mcp@latest",
         "--isolated"
+      ]
+    },
+    "browser": {
+      "command": "npx",
+      "args": [
+        "@agent-infra/mcp-server-browser@latest"
+      ]
+    },
+    "youtube-transcript": {
+      "command": "npx",
+      "args": ["-y", "@kimtaeyoon83/mcp-server-youtube-transcript"]
+    },
+    "web-search": {
+      "command": "npx",
+      "args": [
+        "websearch-mcp"
       ]
     }
   }
