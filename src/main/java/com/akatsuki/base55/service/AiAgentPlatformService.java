@@ -1,4 +1,4 @@
-package com.akatsuki.base55;
+package com.akatsuki.base55.service;
 
 import com.akatsuki.base55.agent.AiAgent;
 import com.akatsuki.base55.domain.agent.AiAgentConfig;
@@ -6,9 +6,6 @@ import com.akatsuki.base55.domain.agent.AiAgentMetadata;
 import com.akatsuki.base55.domain.mcp.tools.McpToolSpec;
 import com.akatsuki.base55.domain.workflow.Workflow;
 import com.akatsuki.base55.exception.ToolNotFoundException;
-import com.akatsuki.base55.service.AgentWorkflowGeneratorService;
-import com.akatsuki.base55.service.AiAgentService;
-import com.akatsuki.base55.service.McpToolFilteringService;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -16,13 +13,13 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class AiAgentPlatform {
+public class AiAgentPlatformService {
 
     private final AgentWorkflowGeneratorService agentWorkflowGeneratorService;
     private final McpToolFilteringService mcpToolFilteringService;
     private final AiAgentService aiAgentService;
 
-    public AiAgentPlatform(AgentWorkflowGeneratorService agentWorkflowGeneratorService, AiAgentService aiAgentService,
+    public AiAgentPlatformService(AgentWorkflowGeneratorService agentWorkflowGeneratorService, AiAgentService aiAgentService,
                          McpToolFilteringService mcpToolFilteringService) {
         this.agentWorkflowGeneratorService = agentWorkflowGeneratorService;
         this.mcpToolFilteringService = mcpToolFilteringService;

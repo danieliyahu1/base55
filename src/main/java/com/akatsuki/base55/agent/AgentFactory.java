@@ -2,8 +2,8 @@ package com.akatsuki.base55.agent;
 
 import com.akatsuki.base55.domain.agent.AiAgentConfig;
 import com.akatsuki.base55.domain.mcp.tools.McpToolSpec;
-import com.akatsuki.base55.registry.ToolRegistry;
-import org.springframework.ai.tool.ToolCallback;
+import com.akatsuki.base55.service.AgentToolService;
+import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,21 +13,21 @@ public class AgentFactory {
     private final TaskDecomposer taskDecomposer;
     private final ResultEvaluator resultEvaluator;
     private final SubTaskExecutorFactory subTaskExecutorFactory;
-    private final ToolRegistry toolRegistry;
+    private final AgentToolService agentToolService;
 
     public AgentFactory(TaskDecomposer taskDecomposer, ResultEvaluator resultEvaluator, SubTaskExecutorFactory subTaskExecutorFactory
-                        , ToolRegistry toolRegistry) {
+                        , AgentToolService agentToolService) {
         this.taskDecomposer = taskDecomposer;
         this.resultEvaluator = resultEvaluator;
         this.subTaskExecutorFactory = subTaskExecutorFactory;
-        this.toolRegistry = toolRegistry;
+        this.agentToolService = agentToolService;
     }
 
     public AiAgent createAgent(AiAgentConfig aiAgentConfig) {
         return new AiAgent(aiAgentConfig.metadata(), taskDecomposer, subTaskExecutorFactory.create(getMatchingToolCallBacks(aiAgentConfig.mcpToolSpecs())), resultEvaluator);
     }
 
-    private List<ToolCallback> getMatchingToolCallBacks(List<McpToolSpec> mcpToolSpecs){
-        return toolRegistry.getMatchingToolCallBacks(mcpToolSpecs);
+    private ToolCallbackProvider getMatchingToolCallBacks(List<McpToolSpec> mcpToolSpecs){
+        return agentToolService.getToolCallbackProviderFromMcpToolSpecs(mcpToolSpecs);
     }
 }

@@ -18,11 +18,7 @@ public class SubTaskExecutorFactory {
         this.chatModel = chatModel;
     }
 
-    public SubTaskExecutor create(List<ToolCallback> toolCallbacks) {
-        return new SubTaskExecutor(chatModel, createToolCallbackProviderFromCallbackTools(toolCallbacks));
-    }
-
-    private ToolCallbackProvider createToolCallbackProviderFromCallbackTools(List<ToolCallback> toolCallbacks){
-        return ToolCallbackProvider.from(toolCallbacks);
+    public SubTaskExecutor create(ToolCallbackProvider toolCallbackProvider){
+        return new SubTaskExecutor(chatModel, toolCallbackProvider);
     }
 }

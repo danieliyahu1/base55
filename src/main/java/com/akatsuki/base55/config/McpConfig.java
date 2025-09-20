@@ -10,12 +10,12 @@ import java.util.List;
 @Configuration
 public class McpConfig {
 
-    @Bean
-    public List<McpToolSpec> mcpToolSpecs (List<McpSyncClient> mcpSyncClients) {
-        return mcpSyncClients.stream().map(client -> client.listTools().tools().stream().map(tool -> new McpToolSpec(
-                tool.name(),
-                tool.description(),
-                client.getServerInfo().name()
-        )).toList()).flatMap(List::stream).toList();
-    }
+//    @Bean
+//    public List<McpToolSpec> mcpToolSpecs (List<McpSyncClient> mcpSyncClients) {
+//        return mcpSyncClients.stream().map(client -> client.listTools().tools().stream().map(tool -> new McpToolSpec(
+//                tool.name(),
+//                tool.description(),
+//                client.getServerInfo().name()
+//        )).toList()).flatMap(List::stream).toList();
+//    }
 }

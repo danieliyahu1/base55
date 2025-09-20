@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.ai.tool.ToolCallback;
-import org.springframework.ai.tool.ToolCallbackProvider;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,17 +23,17 @@ public class AiAgentConfigEntity {
     @JoinColumn(name = "metadata_id", referencedColumnName = "id")
     private AiAgentMetadataEntity metadata;
 
-    @ManyToMany
-    @JoinTable(
-            name = "agent_tool",
-            joinColumns = @JoinColumn(name = "agent_id"),
-            inverseJoinColumns = @JoinColumn(name = "tool_id")
+    @ElementCollection
+    @CollectionTable(
+            name = "agent_tool_ids",
+            joinColumns = @JoinColumn(name = "agent_id")
     )
-    private List<McpToolSpecEntity> mcpToolSpecs;
+    @Column(name = "tool_id", nullable = false)
+    private List<UUID> mcpToolSpecIds;
 
     @Builder
-    public AiAgentConfigEntity(AiAgentMetadataEntity metadata, List<McpToolSpecEntity> mcpToolSpecs) {
+    public AiAgentConfigEntity(AiAgentMetadataEntity metadata, List<UUID> mcpToolSpecIds) {
         this.metadata = metadata;
-        this.mcpToolSpecs = mcpToolSpecs;
+        this.mcpToolSpecIds = mcpToolSpecIds;
     }
 }
