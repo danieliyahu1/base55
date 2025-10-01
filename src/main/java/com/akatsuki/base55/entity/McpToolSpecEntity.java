@@ -30,15 +30,11 @@ public class McpToolSpecEntity {
     @Column(name = "description", length = 1024)
     private String description;
 
-    @Column(name = "description_embedding", columnDefinition = "vector(768)")
-    private float[] descriptionEmbedding;
-
     @Builder
-    public McpToolSpecEntity(UUID toolId, String serverName, String name, String description, float[] descriptionEmbedding) {
+    public McpToolSpecEntity(UUID toolId, String serverName, String name, String description) {
         this.toolId = toolId;
         this.serverName = serverName;
         this.name = name;
         this.description = description;
-        this.descriptionEmbedding = descriptionEmbedding;
     }
 }
