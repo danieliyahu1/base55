@@ -1,4 +1,6 @@
 package com.akatsuki.base55.domain;
 
-public record LlmEvaluationResult(String reason, boolean result) {
+import com.akatsuki.base55.enums.AgentFlowControl;
+
+public record LlmEvaluationResult(String reason, AgentFlowControl result) {
 }

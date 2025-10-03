@@ -59,7 +59,7 @@ public class AiAgentService {
         if(agent == null){
             throw new IllegalArgumentException("Agent not found"); //needs to create custom exception
         }
-        return agent.decomposeTask(task, FIRST_DECOMPOSITION);
+        return null;
     }
 
     @EventListener(ApplicationReadyEvent.class)
@@ -141,7 +141,6 @@ public class AiAgentService {
         if(agent == null){
             throw new AgentNotFound(String.format(String.format(AGENT_NOT_FOUND_EXCEPTION_MESSAGE, id))); //needs to create custom exception
         }
-        SubTask subTask = agent.decomposeTask(prompt, FIRST_DECOMPOSITION);
-        return new AiResponseDomain(subTask.description());
+        return null;
     }
 }

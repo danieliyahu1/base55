@@ -2,6 +2,10 @@ package com.akatsuki.base55.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
@@ -94,8 +98,17 @@ public class LlmConfig {
     @Bean
     @Qualifier("reasoningChatClient")
     public ChatClient huggingFaceChatClient(
-            @Qualifier("huggingFaceChatModel") ChatModel huggingFaceChatModel) {
-        return ChatClient.builder(huggingFaceChatModel)
+            @Qualifier("huggingFaceChatModel") ChatModel huggingFaceChatModel, JdbcChatMemoryRepository chatMemoryRepository) {
+        ChatMemory chatMemory = MessageWindowChatMemory.builder()
+                .chatMemoryRepository(chatMemoryRepository)
+                .maxMessages(10)
+                .build();
+
+        return ChatClient
+                .builder(huggingFaceChatModel)
+                .defaultAdvisors(
+                        MessageChatMemoryAdvisor.builder(chatMemory).build()
+                )
                 .build();
     }
 }
