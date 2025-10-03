@@ -23,36 +23,15 @@ import static com.akatsuki.base55.exception.constant.ExceptionConstant.TOOL_NOT_
 public class McpToolFilteringService {
 
     private final ChatClient groqChatClient;
-    private final List<McpToolSpec> mcpToolSpecs;
     private final ToolCallbackProvider toolCallbackProvider;
 
     public McpToolFilteringService(@Qualifier("groqChatClient") ChatClient groqChatClient,
-                                   ToolCallbackProvider toolCallbackProvider,
-                                   List<McpToolSpec> mcpToolSpecs) {
+                                   ToolCallbackProvider toolCallbackProvider) {
         this.groqChatClient = groqChatClient;
         this.toolCallbackProvider = toolCallbackProvider;
-        this.mcpToolSpecs = mcpToolSpecs;
     }
 
-    public List<McpToolSpec> getFilteredCallBackTools(Workflow workflow) throws ToolNotFoundException {
-        log.info("Filtering tools for workflow with {} steps", workflow.WorkflowSteps().size());
-
-        List<McpToolSpec> filteredMcpToolSpecs = new ArrayList<>();
-        Set<UUID> uniqueToolIds = new HashSet<>(); // to ensure distinct tools
-
-        for (WorkflowStep step : workflow.WorkflowSteps()) {
-            List<McpToolSpec> toolsForStep = getListOfToolsForWorkflowStep(step);
-            for (McpToolSpec tool : toolsForStep) {
-                if (uniqueToolIds.add(tool.id())) { // only add if not already added
-                    filteredMcpToolSpecs.add(tool);
-                }
-            }
-        }
-
-        return filteredMcpToolSpecs;
-    }
-
-    private List<McpToolSpec> getListOfToolsForWorkflowStep(WorkflowStep step) throws ToolNotFoundException {
+    public List<McpToolSpec> getListOfToolsForWorkflowStep(WorkflowStep step, List<McpToolSpec> mcpToolSpecs) throws ToolNotFoundException {
         StringBuilder prompt = new StringBuilder();
         prompt.append("You are an AI assistant. For the following workflow steps, analyze all the available tools and decide for each tool:\n\n");
         prompt.append("- Step: ").append(step.task()).append("\n");
@@ -72,16 +51,16 @@ public class McpToolFilteringService {
                 .user(u ->
                         u.text(TOOL_FILTERING_TASK_DESCRIPTION)
                                 .param("step", step.task())
-                                .param("tools", getToolDTOList())
+                                .param("tools", getToolDTOList(mcpToolSpecs))
                 )
                 .call()
                 .entity(ToolEvaluation[].class);
 
         log.debug("LLM Response: {}", response);
-        return convertToolEvaluationToMcpToolSpec(Arrays.stream(response).toList());
+        return convertToolEvaluationToMcpToolSpec(Arrays.stream(response).toList(), mcpToolSpecs);
     }
 
-    private List<McpToolSpecDTO> getToolDTOList(){
+    private List<McpToolSpecDTO> getToolDTOList(List<McpToolSpec> mcpToolSpecs) {
         return mcpToolSpecs.stream()
                 .map(tool -> new McpToolSpecDTO(
                         tool.id(),
@@ -91,18 +70,18 @@ public class McpToolFilteringService {
                 .toList();
     }
 
-    private List<McpToolSpec> convertToolEvaluationToMcpToolSpec(List<ToolEvaluation> toolEvaluations)
+    private List<McpToolSpec> convertToolEvaluationToMcpToolSpec(List<ToolEvaluation> toolEvaluations, List<McpToolSpec> mcpToolSpecs)
             throws ToolNotFoundException {
         List<McpToolSpec> requiredMcpTools = new ArrayList<>();
         for (ToolEvaluation toolEvaluation : toolEvaluations) {
             if (toolEvaluation.isRequired()) {
-                requiredMcpTools.add(getMcpToolSpecById(toolEvaluation.id()));
+                requiredMcpTools.add(getMcpToolSpecById(toolEvaluation.id(), mcpToolSpecs) );
             }
         }
         return requiredMcpTools;
     }
 
-    private McpToolSpec getMcpToolSpecById(UUID id) throws ToolNotFoundException {
+    private McpToolSpec getMcpToolSpecById(UUID id, List<McpToolSpec> mcpToolSpecs) throws ToolNotFoundException {
         return mcpToolSpecs.stream()
                 .filter(tool -> tool.id().equals(id))
                 .findFirst()

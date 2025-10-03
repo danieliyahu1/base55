@@ -7,7 +7,11 @@ public record McpToolSpec(
         String name,
         String description,
         String serverName) {
-    public McpToolSpec(String name, String description, String serverName) {
-        this(UUID.randomUUID(), name, description, serverName);
+    public static McpToolSpec newSpec(String name, String description, String serverName) {
+        return new McpToolSpec(UUID.randomUUID(), name, description, serverName);
+    }
+
+    public static McpToolSpec fromDb(UUID id, String name, String description, String serverName) {
+        return new McpToolSpec(id, name, description, serverName);
     }
 }

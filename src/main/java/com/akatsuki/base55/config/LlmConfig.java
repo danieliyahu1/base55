@@ -59,4 +59,10 @@ public class LlmConfig {
                 .build();
     }
 
+    @Bean
+    public ChatClient deepSeekChatClient(
+            @Qualifier("deepSeekChatModel") ChatModel deepseekChatModel) {
+        return ChatClient.builder(deepseekChatModel)
+                .build();
+    }
 }

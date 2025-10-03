@@ -1,8 +1,27 @@
 {
   "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest",
+        "--isolated"
+      ]
+    },
+    "browser": {
+      "command": "npx",
+      "args": [
+        "@agent-infra/mcp-server-browser@latest"
+      ]
+    },
     "youtube-transcript": {
       "command": "npx",
       "args": ["-y", "@kimtaeyoon83/mcp-server-youtube-transcript"]
+    },
+    "web-search": {
+      "command": "npx",
+      "args": [
+        "websearch-mcp"
+      ]
     }
   }
 }

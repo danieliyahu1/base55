@@ -6,9 +6,10 @@ import com.akatsuki.base55.dto.AiRequestDTO;
 import com.akatsuki.base55.entity.McpToolSpecEmbeddingEntity;
 import com.akatsuki.base55.exception.Base55Exception;
 import com.akatsuki.base55.exception.ToolNotFoundException;
-import com.akatsuki.base55.repository.McpToolSpecEmbeddingRepository;
-import com.akatsuki.base55.service.AgentToolService;
 import com.akatsuki.base55.service.Base55Service;
+import com.akatsuki.base55.service.McpToolEmbeddingService;
+import com.akatsuki.base55.service.ToolService;
+import org.springframework.ai.document.Document;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.definition.ToolDefinition;
@@ -27,9 +28,7 @@ public class Base55Controller {
     @Autowired
     ToolCallbackProvider toolCallbackProvider;
     @Autowired
-    AgentToolService agentToolService;
-    @Autowired
-    McpToolSpecEmbeddingRepository mcpToolSpecEmbeddingRepository;
+    ToolService toolService;
 
     public Base55Controller(Base55Service base55Service) {
         this.base55Service = base55Service;
@@ -57,12 +56,32 @@ public class Base55Controller {
 
     @GetMapping("/mcp-tool-specs")
     public List<McpToolSpec> getAllMcpToolSpecs() {
-        return agentToolService.getAllMcpToolSpecs();
+        return toolService.getAllMcpToolSpecs();
     }
 
-    @GetMapping("/mcp-tool-spec-embeddings")
-    public List<McpToolSpecEmbeddingEntity> getAllMcpToolSpecEmbeddings() {
-        return mcpToolSpecEmbeddingRepository.findAll();
+    @PostMapping("/mcp-tool-spec-embeddings")
+    public List<Document> getAllMcpToolSpecEmbeddings(@RequestBody Map<String, Object> requestBody) {
+
+        // 1. Extract the String 'query'
+        String query = (String) requestBody.get("query");
+
+        // 2. Extract the Integer 'topK'.
+        //    Note: JSON numbers often map to Integer by default.
+        Integer topKObject = (Integer) requestBody.get("topK");
+
+        // Handle potential null or casting issues (important for robustness)
+        if (query == null || topKObject == null) {
+            // Throw an appropriate exception, e.g., Bad Request (400)
+            throw new IllegalArgumentException("Missing required parameters: query or topK");
+        }
+
+        int topK = topKObject; // Autounboxing
+
+        return toolService.getSimilarDocumentsByQueryAndTopK(query, topK);
     }
 
+    @GetMapping("/mcp-tool-spec-embeddings/{id}")
+    public Document getMcpToolSpecEmbeddingById(@PathVariable String id) {
+        return toolService.getToolById(id);
+    }
 }

@@ -133,4 +133,7 @@ public class PlatformConstants {
             ### Criteria to Evaluate:
             The text must be factually accurate and relevant to the user's query.
             """;
+
+    public static final int SIMILARITY_SEARCH_TOP_K = 50;
+    public static final String SIMILARITY_SEARCH_THRESHOLD = "0.7";
 }

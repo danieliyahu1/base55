@@ -2,7 +2,7 @@ package com.akatsuki.base55.agent;
 
 import com.akatsuki.base55.domain.agent.AiAgentConfig;
 import com.akatsuki.base55.domain.mcp.tools.McpToolSpec;
-import com.akatsuki.base55.service.AgentToolService;
+import com.akatsuki.base55.service.ToolService;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.stereotype.Component;
 
@@ -13,10 +13,10 @@ public class AgentFactory {
     private final TaskDecomposer taskDecomposer;
     private final ResultEvaluator resultEvaluator;
     private final SubTaskExecutorFactory subTaskExecutorFactory;
-    private final AgentToolService agentToolService;
+    private final ToolService agentToolService;
 
     public AgentFactory(TaskDecomposer taskDecomposer, ResultEvaluator resultEvaluator, SubTaskExecutorFactory subTaskExecutorFactory
-                        , AgentToolService agentToolService) {
+                        , ToolService agentToolService) {
         this.taskDecomposer = taskDecomposer;
         this.resultEvaluator = resultEvaluator;
         this.subTaskExecutorFactory = subTaskExecutorFactory;

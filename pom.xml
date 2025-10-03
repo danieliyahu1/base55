@@ -80,6 +80,10 @@
 			<artifactId>hibernate-vector</artifactId>
 			<version>6.6.26.Final</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.ai</groupId>
+			<artifactId>spring-ai-starter-model-deepseek</artifactId>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>

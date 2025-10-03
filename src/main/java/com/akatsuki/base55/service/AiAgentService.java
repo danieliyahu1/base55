@@ -26,15 +26,15 @@ public class AiAgentService {
     private final Map<UUID, AiAgent> agents;
     private final AiAgentConfigRepository aiAgentRepository;
     private final AiAgentMetadataRepository aiAgentMetadataRepository;
-    private final AgentToolService agentToolService;
+    private final ToolService toolService;
 
     public AiAgentService(AiAgentConfigRepository aiAgentConfigRepository, AiAgentMetadataRepository aiAgentMetadataRepository,
-                          AgentFactory agentFactory, AgentToolService agentToolService) {
+                          AgentFactory agentFactory, ToolService toolService) {
         agents = new HashMap<>();
         this.aiAgentRepository = aiAgentConfigRepository;
         this.aiAgentMetadataRepository = aiAgentMetadataRepository;
         this.agentFactory = agentFactory;
-        this.agentToolService = agentToolService;
+        this.toolService = toolService;
     }
 
     public AiAgent createAgent(AiAgentConfig aiAgentConfig) {

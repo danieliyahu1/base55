@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface McpToolSpecRepository extends JpaRepository<McpToolSpecEntity, UUID> {
     Optional<McpToolSpecEntity> findByServerNameAndName(String serverName, String name);
+    Optional<McpToolSpecEntity> findByToolId(UUID toolId);
 }
