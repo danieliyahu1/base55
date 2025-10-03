@@ -23,7 +23,7 @@ public class AiAgentConfigEntity {
     @JoinColumn(name = "metadata_id", referencedColumnName = "id")
     private AiAgentMetadataEntity metadata;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
             name = "agent_tool_ids",
             joinColumns = @JoinColumn(name = "agent_id")

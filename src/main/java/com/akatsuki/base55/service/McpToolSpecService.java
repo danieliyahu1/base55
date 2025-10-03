@@ -29,13 +29,13 @@ public class McpToolSpecService {
 
     public List<McpToolSpec> initializeMcpTools() {
         return saveMcpTools(getMcpToolSpecsFromMcpClients(mcpSyncClients)).stream().map(
-                entity -> McpToolSpec.fromDb(entity.getToolId(), entity.getName(), entity.getDescription(), entity.getServerName())
+                this::mcpToolSpecEntityToMcpToolSpec
         ).toList();
     }
 
     public List<McpToolSpec> getAllMcpToolSpecs() {
         return mcpToolSpecRepository.findAll().stream()
-                .map(entity -> McpToolSpec.fromDb(entity.getToolId(), entity.getName(), entity.getDescription(), entity.getServerName()))
+                .map(this::mcpToolSpecEntityToMcpToolSpec)
                 .toList();
     }
 
@@ -62,8 +62,18 @@ public class McpToolSpecService {
 
     public McpToolSpec getToolByToolId(UUID toolId) {
         return mcpToolSpecRepository.findByToolId(toolId)
-                .map(entity -> McpToolSpec.fromDb(entity.getToolId(), entity.getName(), entity.getDescription(), entity.getServerName()))
+                .map(this::mcpToolSpecEntityToMcpToolSpec)
                 .orElse(null);
+    }
+
+    public List<McpToolSpec> getToolsByToolIds(List<UUID> ids) {
+        return mcpToolSpecRepository.findAllByToolIdIn(ids).stream()
+                .map(this::mcpToolSpecEntityToMcpToolSpec)
+                .toList();
+    }
+
+    private McpToolSpec mcpToolSpecEntityToMcpToolSpec(McpToolSpecEntity entity) {
+        return McpToolSpec.fromDb(entity.getToolId(), entity.getName(), entity.getDescription(), entity.getServerName());
     }
 
     private List<McpToolSpecEntity> saveMcpTools(List<McpToolSpec> tools) {

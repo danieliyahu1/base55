@@ -45,8 +45,12 @@ public class ToolService {
         return mcpToolEmbeddingService.getToolById(id);
     }
 
+    public List<McpToolSpec> getToolsByToolIds(List<UUID> ids) {
+        return mcpToolSpecService.getToolsByToolIds(ids);
+    }
+
     @EventListener(ApplicationReadyEvent.class)
-    private void initializeMcpTools() throws ToolNotFoundException {
+    private void initializeMcpTools() {
         List<McpToolSpec> tools = mcpToolSpecService.initializeMcpTools();
         mcpToolEmbeddingService.initializeMcpTools(tools);
     }
