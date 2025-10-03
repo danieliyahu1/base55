@@ -2,6 +2,7 @@ package com.akatsuki.base55.agent;
 
 import com.akatsuki.base55.domain.SubTask;
 import com.akatsuki.base55.domain.agent.AiAgentMetadata;
+import com.akatsuki.base55.dto.AiResponseDTO;
 import lombok.Getter;
 
 import java.util.UUID;

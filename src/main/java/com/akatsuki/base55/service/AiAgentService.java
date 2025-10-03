@@ -2,12 +2,15 @@ package com.akatsuki.base55.service;
 
 import com.akatsuki.base55.agent.AgentFactory;
 import com.akatsuki.base55.agent.AiAgent;
+import com.akatsuki.base55.domain.AiResponseDomain;
 import com.akatsuki.base55.domain.SubTask;
 import com.akatsuki.base55.domain.agent.AiAgentConfig;
 import com.akatsuki.base55.domain.agent.AiAgentMetadata;
 import com.akatsuki.base55.domain.mcp.tools.McpToolSpec;
+import com.akatsuki.base55.dto.AiResponseDTO;
 import com.akatsuki.base55.entity.AiAgentConfigEntity;
 import com.akatsuki.base55.entity.AiAgentMetadataEntity;
+import com.akatsuki.base55.exception.AgentNotFound;
 import com.akatsuki.base55.repository.AiAgentConfigRepository;
 import com.akatsuki.base55.repository.AiAgentMetadataRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +25,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.akatsuki.base55.constant.AgentConstants.FIRST_DECOMPOSITION;
+import static com.akatsuki.base55.exception.constant.ExceptionConstant.AGENT_NOT_FOUND_EXCEPTION_MESSAGE;
 
 @Service
 @Slf4j
@@ -80,7 +84,8 @@ public class AiAgentService {
                 entity -> new AiAgentConfig(
                         new AiAgentMetadata(
                                 entity.getMetadata().getAgentId(),
-                                entity.getMetadata().getDescription()
+                                entity.getMetadata().getDescription(),
+                                entity.getMetadata().getSystemPrompt()
                         ),
                         toolsByAgentId.get(entity.getMetadata().getAgentId())
                 )
@@ -117,6 +122,7 @@ public class AiAgentService {
                 AiAgentMetadataEntity.builder()
                         .agentId(aiAgentMetadata.id())
                         .description(aiAgentMetadata.description())
+                        .systemPrompt(aiAgentMetadata.systemPrompt())
                         .build()
         );
     }
@@ -127,5 +133,15 @@ public class AiAgentService {
                 .mcpToolSpecIds(toolIds)
                 .build()
         );
+    }
+
+    public AiResponseDomain chatWithAgent(String id, String prompt) throws AgentNotFound {
+        UUID agentId = UUID.fromString(id);
+        AiAgent agent = agents.get(agentId);
+        if(agent == null){
+            throw new AgentNotFound(String.format(String.format(AGENT_NOT_FOUND_EXCEPTION_MESSAGE, id))); //needs to create custom exception
+        }
+        SubTask subTask = agent.decomposeTask(prompt, FIRST_DECOMPOSITION);
+        return new AiResponseDomain(subTask.description());
     }
 }

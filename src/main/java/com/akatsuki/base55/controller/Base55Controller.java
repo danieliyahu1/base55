@@ -3,11 +3,11 @@ package com.akatsuki.base55.controller;
 import com.akatsuki.base55.domain.mcp.tools.McpToolSpec;
 import com.akatsuki.base55.domain.workflow.Workflow;
 import com.akatsuki.base55.dto.AiRequestDTO;
-import com.akatsuki.base55.entity.McpToolSpecEmbeddingEntity;
+import com.akatsuki.base55.dto.AiResponseDTO;
+import com.akatsuki.base55.exception.AgentNotFound;
 import com.akatsuki.base55.exception.Base55Exception;
 import com.akatsuki.base55.exception.ToolNotFoundException;
 import com.akatsuki.base55.service.Base55Service;
-import com.akatsuki.base55.service.McpToolEmbeddingService;
 import com.akatsuki.base55.service.ToolService;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.tool.ToolCallback;
@@ -83,5 +83,10 @@ public class Base55Controller {
     @GetMapping("/mcp-tool-spec-embeddings/{id}")
     public Document getMcpToolSpecEmbeddingById(@PathVariable String id) {
         return toolService.getToolById(id);
+    }
+
+    @PostMapping("/agent/{id}")
+    public AiResponseDTO chatWithAgent(@PathVariable String id, @RequestBody AiRequestDTO request) throws AgentNotFound {
+        return new AiResponseDTO(base55Service.chatWithAgent(id, request.getPrompt()).result());
     }
 }

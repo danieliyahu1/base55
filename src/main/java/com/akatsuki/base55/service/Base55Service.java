@@ -1,5 +1,8 @@
 package com.akatsuki.base55.service;
 
+import com.akatsuki.base55.domain.AiResponseDomain;
+import com.akatsuki.base55.dto.AiResponseDTO;
+import com.akatsuki.base55.exception.AgentNotFound;
 import com.akatsuki.base55.service.AiAgentPlatformService;
 import com.akatsuki.base55.domain.mcp.tools.McpToolSpec;
 import com.akatsuki.base55.domain.workflow.Workflow;
@@ -38,5 +41,9 @@ public class Base55Service {
             log.error("Error creating agent: {}", e.getMessage());
             throw new Base55Exception(e.getMessage());
         }
+    }
+
+    public AiResponseDomain chatWithAgent(String id, String prompt) throws AgentNotFound {
+        return aiAgentService.chatWithAgent(id, prompt);
     }
 }

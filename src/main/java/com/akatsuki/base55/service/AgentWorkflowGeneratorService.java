@@ -14,7 +14,7 @@ import static com.akatsuki.base55.constant.PlatformConstants.*;
 public class AgentWorkflowGeneratorService {
     private final ChatClient groqChatClient;
 
-    public AgentWorkflowGeneratorService(@Qualifier("deepSeekChatClient") ChatClient groqChatClient) {
+    public AgentWorkflowGeneratorService(@Qualifier("reasoningChatClient") ChatClient groqChatClient) {
         this.groqChatClient = groqChatClient;
     }
 
@@ -22,8 +22,8 @@ public class AgentWorkflowGeneratorService {
         UserPromptIntent userIntent = userIntentParsing(task);
         log.info("User Intent: Primary Goal - {}, Secondary Goals - {}", userIntent.primaryGoal(), userIntent.secondaryGoals());
         return this.groqChatClient.prompt()
-                .system(s -> s.text(WORKFLOW_LLM_ROLE))
-                .user(u -> u.text(GENERATE_WORKFLOW_PROMPT)
+                .system(s -> s.text(WORKFLOW_GENERATION_ROLE))
+                .user(u -> u.text(WORKFLOW_GENERATION_PROMPT)
                         .param("primaryGoal", userIntent.primaryGoal())
                         .param("secondaryGoals", String.join(", ", userIntent.secondaryGoals())))
                 .call()

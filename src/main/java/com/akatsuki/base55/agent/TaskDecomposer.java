@@ -13,7 +13,7 @@ public class TaskDecomposer {
 
     ChatClient chatClient;
 
-    public TaskDecomposer(@Qualifier("deepSeekChatClient") ChatClient chatClient) {
+    public TaskDecomposer(@Qualifier("reasoningChatClient") ChatClient chatClient) {
         this.chatClient = chatClient;
     }
 

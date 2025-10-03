@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 public class LlmConfig {
 
     @Bean
+    @Qualifier("evaluationChatClient")
     public ChatClient groqChatClient(
             @Qualifier("openAiChatModel") ChatModel openAiChatModel) {
         return ChatClient.builder(openAiChatModel)
@@ -47,6 +48,7 @@ public class LlmConfig {
     }
 
     @Bean
+    @Qualifier("executorChatClient")
     public ChatClient openRouterChatClient(
             @Qualifier("openRouterChatModel") ChatModel openRouterChatModel,
             ToolCallbackProvider toolCallbackProvider) {
@@ -63,6 +65,37 @@ public class LlmConfig {
     public ChatClient deepSeekChatClient(
             @Qualifier("deepSeekChatModel") ChatModel deepseekChatModel) {
         return ChatClient.builder(deepseekChatModel)
+                .build();
+    }
+
+    @Bean
+    public ChatModel huggingFaceChatModel(
+            @Value("${huggingface.chat.api-key}") String apiKey,
+            @Value("${huggingface.chat.url}") String baseUrl,
+            @Value("${huggingface.chat.model}") String model,
+            @Value("${huggingface.chat.temperature}") double temperature) {
+
+        OpenAiApi openAiApi = OpenAiApi.builder()
+                .apiKey(apiKey)
+                .baseUrl(baseUrl) // https://router.huggingface.co/v1
+                .build();
+
+        OpenAiChatOptions options = OpenAiChatOptions.builder()
+                .model(model) // e.g. deepseek-ai/DeepSeek-V3.2-Exp:novita
+                .temperature(temperature)
+                .build();
+
+        return OpenAiChatModel.builder()
+                .openAiApi(openAiApi)
+                .defaultOptions(options)
+                .build();
+    }
+
+    @Bean
+    @Qualifier("reasoningChatClient")
+    public ChatClient huggingFaceChatClient(
+            @Qualifier("huggingFaceChatModel") ChatModel huggingFaceChatModel) {
+        return ChatClient.builder(huggingFaceChatModel)
                 .build();
     }
 }

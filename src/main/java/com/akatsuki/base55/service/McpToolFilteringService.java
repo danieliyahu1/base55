@@ -25,7 +25,7 @@ public class McpToolFilteringService {
     private final ChatClient groqChatClient;
     private final ToolCallbackProvider toolCallbackProvider;
 
-    public McpToolFilteringService(@Qualifier("groqChatClient") ChatClient groqChatClient,
+    public McpToolFilteringService(@Qualifier("evaluationChatClient") ChatClient groqChatClient,
                                    ToolCallbackProvider toolCallbackProvider) {
         this.groqChatClient = groqChatClient;
         this.toolCallbackProvider = toolCallbackProvider;

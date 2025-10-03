@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import java.util.UUID;
 
@@ -24,9 +25,13 @@ public class AiAgentMetadataEntity {
     @Column(name = "agent_id", unique = true, nullable = false)
     private UUID agentId;
 
+    @Column(name = "system_prompt", nullable = false)
+    private String systemPrompt;
+
     @Builder
-    public AiAgentMetadataEntity(String description, UUID agentId) {
+    public AiAgentMetadataEntity(@NonNull String description, @NonNull UUID agentId, @NonNull String systemPrompt) {
         this.description = description;
         this.agentId = agentId;
+        this.systemPrompt = systemPrompt;
     }
 }
