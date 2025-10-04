@@ -64,12 +64,13 @@ public class AiAgentService {
         return agent.executeTask(prompt);
     }
 
-    public SubTask decomposeTask(UUID agentId, String task){
+    public AiResponseDomain executeTask2(String id, String prompt) throws AgentNotFound {
+        UUID agentId = UUID.fromString(id);
         AiAgent agent = agents.get(agentId);
         if(agent == null){
-            throw new IllegalArgumentException("Agent not found"); //needs to create custom exception
+            throw new AgentNotFound(String.format(String.format(AGENT_NOT_FOUND_EXCEPTION_MESSAGE, id)));
         }
-        return null;
+        return agent.executeTask2(prompt);
     }
 
     @EventListener(ApplicationReadyEvent.class)

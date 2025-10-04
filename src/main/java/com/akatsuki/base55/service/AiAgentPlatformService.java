@@ -32,7 +32,9 @@ public class AiAgentPlatformService {
     }
 
     public Map<String, Object> createAgent(String task) throws ToolNotFoundException {
+        log.info("Creating agent for task: {}", task);
         Workflow workflow = agentWorkflowGeneratorService.generateAgentWorkflow(task);
+        log.info("Generated workflow: {}", workflow);
         List<McpToolSpec> mcpToolSpecs = getFilteredTools(workflow);
         AiAgentConfig aiAgentConfig = new AiAgentConfig(createAgentMetadata(workflow.aiAgentDescription(), workflow.systemPrompt()), mcpToolSpecs);
 

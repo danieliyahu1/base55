@@ -49,6 +49,10 @@ public class Base55Service {
         return aiAgentService.executeTask(id, prompt);
     }
 
+    public AiResponseDomain executeTask2(String id, String prompt) throws AgentNotFound {
+        return aiAgentService.executeTask2(id, prompt);
+    }
+
     public List<AiAgentMetadata> getAllAgents() {
         return aiAgentService.getAllAgents();
     }

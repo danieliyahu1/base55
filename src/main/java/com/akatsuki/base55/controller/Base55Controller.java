@@ -1,5 +1,6 @@
 package com.akatsuki.base55.controller;
 
+import com.akatsuki.base55.domain.AiResponseDomain;
 import com.akatsuki.base55.domain.agent.AiAgentMetadata;
 import com.akatsuki.base55.domain.agent.SubTaskExecutorResponse;
 import com.akatsuki.base55.domain.mcp.tools.McpToolSpec;
@@ -90,6 +91,11 @@ public class Base55Controller {
     @PostMapping("/agents/{id}")
     public SubTaskExecutorResponse executeTask(@PathVariable String id, @RequestBody AiRequestDTO request) throws AgentNotFound {
         return base55Service.executeTask(id, request.getPrompt());
+    }
+
+    @PostMapping("/agents2/{id}")
+    public AiResponseDomain executeTask2(@PathVariable String id, @RequestBody AiRequestDTO request) throws AgentNotFound {
+        return base55Service.executeTask2(id, request.getPrompt());
     }
 
     @GetMapping("/agents")

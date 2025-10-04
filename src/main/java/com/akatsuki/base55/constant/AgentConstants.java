@@ -42,6 +42,13 @@ public class AgentConstants {
         - data: 
         """;
 
+    public static final String SYSTEM_PROMPT_TASK_EXECUTOR = """
+        You are a reliable expert AI agent that executes specific sub-tasks.
+        Carefully read the sub-task description and determine the best approach to accomplish it.
+        If needed use the available tools effectively to gather information, perform actions, and achieve the desired outcome.
+        Always ensure that your actions align with the sub-task requirements.
+        """;
+
 
     public static final String USER_PROMPT_SUB_TASK_EXECUTOR = """
         Execute reliably the following sub-task:
@@ -74,6 +81,16 @@ public class AgentConstants {
         
                 Subtask:
                 {sub-task}
+        
+                LLM Response:
+                {llm-response}
+        """;
+
+    public static final String USER_PROMPT_TASK_EVALUATOR = """
+            Evaluate the following task execution response.
+
+                Original Task:
+                {task}
         
                 LLM Response:
                 {llm-response}

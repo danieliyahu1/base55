@@ -8,8 +8,7 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import static com.akatsuki.base55.constant.AgentConstants.SYSTEM_PROMPT_SUB_TASK_EXECUTOR;
-import static com.akatsuki.base55.constant.AgentConstants.USER_PROMPT_SUB_TASK_EXECUTOR;
+import static com.akatsuki.base55.constant.AgentConstants.*;
 
 public class SubTaskExecutor {
     private final ChatClient chatClient;
@@ -29,6 +28,16 @@ public class SubTaskExecutor {
                 .advisors(a -> a.param("conversationId", conversationId))
                 .call()
                 .entity(SubTaskExecutorResponse.class);
+    }
+
+    public AiResponseDomain executeSubTask(String task, String conversationId) {
+        return this.chatClient.prompt()
+                .system(s -> s.text(SYSTEM_PROMPT_TASK_EXECUTOR))
+                .user(u -> u.text(USER_PROMPT_SUB_TASK_EXECUTOR)
+                        .param("sub-task", task))
+                .advisors(a -> a.param("conversationId", conversationId))
+                .call()
+                .entity(AiResponseDomain.class);
     }
 
 }

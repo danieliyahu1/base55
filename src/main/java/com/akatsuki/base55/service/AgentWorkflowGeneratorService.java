@@ -13,8 +13,8 @@ import static com.akatsuki.base55.constant.PlatformConstants.*;
 @Service
 public class AgentWorkflowGeneratorService {
     private final ChatClient groqChatClient;
-
-    public AgentWorkflowGeneratorService(@Qualifier("reasoningChatClient") ChatClient groqChatClient) {
+//switch back to reasoningChatClient
+    public AgentWorkflowGeneratorService(@Qualifier("executorChatClient") ChatClient groqChatClient) {
         this.groqChatClient = groqChatClient;
     }
 

@@ -61,7 +61,7 @@ public class LlmConfig {
                 toolCallbackProvider.getToolCallbacks().length);
 
         return ChatClient.builder(openRouterChatModel)
-                .defaultToolCallbacks(toolCallbackProvider)
+                //.defaultToolCallbacks(toolCallbackProvider)
                 .build();
     }
 
@@ -72,43 +72,43 @@ public class LlmConfig {
                 .build();
     }
 
-    @Bean
-    public ChatModel huggingFaceChatModel(
-            @Value("${huggingface.chat.api-key}") String apiKey,
-            @Value("${huggingface.chat.url}") String baseUrl,
-            @Value("${huggingface.chat.model}") String model,
-            @Value("${huggingface.chat.temperature}") double temperature) {
-
-        OpenAiApi openAiApi = OpenAiApi.builder()
-                .apiKey(apiKey)
-                .baseUrl(baseUrl) // https://router.huggingface.co/v1
-                .build();
-
-        OpenAiChatOptions options = OpenAiChatOptions.builder()
-                .model(model) // e.g. deepseek-ai/DeepSeek-V3.2-Exp:novita
-                .temperature(temperature)
-                .build();
-
-        return OpenAiChatModel.builder()
-                .openAiApi(openAiApi)
-                .defaultOptions(options)
-                .build();
-    }
-
-    @Bean
-    @Qualifier("reasoningChatClient")
-    public ChatClient huggingFaceChatClient(
-            @Qualifier("huggingFaceChatModel") ChatModel huggingFaceChatModel, JdbcChatMemoryRepository chatMemoryRepository) {
-        ChatMemory chatMemory = MessageWindowChatMemory.builder()
-                .chatMemoryRepository(chatMemoryRepository)
-                .maxMessages(10)
-                .build();
-
-        return ChatClient
-                .builder(huggingFaceChatModel)
-                .defaultAdvisors(
-                        MessageChatMemoryAdvisor.builder(chatMemory).build()
-                )
-                .build();
-    }
+//    @Bean
+//    public ChatModel huggingFaceChatModel(
+//            @Value("${huggingface.chat.api-key}") String apiKey,
+//            @Value("${huggingface.chat.url}") String baseUrl,
+//            @Value("${huggingface.chat.model}") String model,
+//            @Value("${huggingface.chat.temperature}") double temperature) {
+//
+//        OpenAiApi openAiApi = OpenAiApi.builder()
+//                .apiKey(apiKey)
+//                .baseUrl(baseUrl) // https://router.huggingface.co/v1
+//                .build();
+//
+//        OpenAiChatOptions options = OpenAiChatOptions.builder()
+//                .model(model) // e.g. deepseek-ai/DeepSeek-V3.2-Exp:novita
+//                .temperature(temperature)
+//                .build();
+//
+//        return OpenAiChatModel.builder()
+//                .openAiApi(openAiApi)
+//                .defaultOptions(options)
+//                .build();
+//    }
+//
+//    @Bean
+//    @Qualifier("reasoningChatClient")
+//    public ChatClient huggingFaceChatClient(
+//            @Qualifier("huggingFaceChatModel") ChatModel huggingFaceChatModel, JdbcChatMemoryRepository chatMemoryRepository) {
+//        ChatMemory chatMemory = MessageWindowChatMemory.builder()
+//                .chatMemoryRepository(chatMemoryRepository)
+//                .maxMessages(10)
+//                .build();
+//
+//        return ChatClient
+//                .builder(huggingFaceChatModel)
+//                .defaultAdvisors(
+//                        MessageChatMemoryAdvisor.builder(chatMemory).build()
+//                )
+//                .build();
+//    }
 }

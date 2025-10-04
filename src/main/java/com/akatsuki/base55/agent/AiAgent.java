@@ -32,12 +32,6 @@ public class AiAgent {
         this.resultEvaluator = resultEvaluator;
     }
 
-//    public SubTask decomposeTask(String task) {
-//        return taskDecomposer.getNextSubTask(task,
-//                generateSystemMessageForDecompposeTask(task)
-//                , agentId.toString());
-//    }
-
     public SubTaskExecutorResponse executeTask(String task) {
         log.info("Starting task execution for agent: {}", agentId);
         log.info("Generating first SubTask for agent: {}", agentId);
@@ -47,6 +41,13 @@ public class AiAgent {
         log.info("First SubTask generated for agent {}: {}", agentId, firstSubTask.description());
         log.info("Entering agentic loop for agent: {}", agentId);
         return agenticLoop(firstSubTask, task);
+    }
+
+    public AiResponseDomain executeTask2(String task) {
+        log.info("Starting task execution for agent: {}", agentId);
+
+        log.info("Entering agentic loop for agent: {}", agentId);
+        return agenticLoop(task);
     }
 
     // need to change the result in AiResponseDomain to be accurate
@@ -74,9 +75,31 @@ public class AiAgent {
         return subTaskExecutorResponse;
     }
 
+    private AiResponseDomain agenticLoop(String task){
+        LlmEvaluationResult llmEvaluationResult = null;
+        AiResponseDomain aiResponseDomain = null;
+        log.info("Starting agentic loop for agent: {} with task: {}", agentId, task);
+        while(llmEvaluationResult == null || llmEvaluationResult.result() != AgentFlowControl.TASK_COMPLETED){
+            aiResponseDomain = executeSubTask(task);
+            log.info("Evaluating task response for agent: {} with task: {}", agentId, task);
+            llmEvaluationResult = evaluateSubTaskResponse(task, aiResponseDomain);
+            log.info("Evaluation response for agent {} - Reason: {}, Result: {}", agentId, llmEvaluationResult.reason(), llmEvaluationResult.result());
+
+        }
+        log.info("Agentic loop completed for agent: {}", agentId);
+        return aiResponseDomain;
+    }
+
     private SubTaskExecutorResponse executeSubTask(SubTask subTask) {
         return subTaskExecutor.executeSubTask(
                 subTask,
+                agentId.toString()
+        );
+    }
+
+    private AiResponseDomain executeSubTask(String task) {
+        return subTaskExecutor.executeSubTask(
+                task,
                 agentId.toString()
         );
     }
@@ -85,6 +108,13 @@ public class AiAgent {
         return resultEvaluator.evaluationSubTaskResponse(
                 originalTask,
                 subTask,
+                subTaskExecutorResponse
+        );
+    }
+
+    private LlmEvaluationResult evaluateSubTaskResponse(String task, AiResponseDomain subTaskExecutorResponse) {
+        return resultEvaluator.evaluationSubTaskResponse(
+                task,
                 subTaskExecutorResponse
         );
     }

@@ -19,7 +19,20 @@ public class TaskDecomposer {
     ChatClient chatClient;
     ChatMemory chatMemory;
 
-    public TaskDecomposer(@Qualifier("huggingFaceChatModel") ChatModel huggingFaceChatModel
+//    public TaskDecomposer(@Qualifier("huggingFaceChatModel") ChatModel huggingFaceChatModel
+//            , JdbcChatMemoryRepository chatMemoryRepository) {
+//        this.chatMemory = MessageWindowChatMemory.builder()
+//                .chatMemoryRepository(chatMemoryRepository)
+//                .maxMessages(25)
+//                .build();
+//
+//        this.chatClient = ChatClient.builder(huggingFaceChatModel).defaultAdvisors(
+//                        MessageChatMemoryAdvisor.builder(chatMemory).build()
+//                )
+//                .build();
+//    }
+
+    public TaskDecomposer(@Qualifier("openRouterChatModel") ChatModel huggingFaceChatModel
             , JdbcChatMemoryRepository chatMemoryRepository) {
         this.chatMemory = MessageWindowChatMemory.builder()
                 .chatMemoryRepository(chatMemoryRepository)
