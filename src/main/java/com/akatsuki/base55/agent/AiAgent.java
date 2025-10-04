@@ -55,14 +55,18 @@ public class AiAgent {
         SubTaskExecutorResponse subTaskExecutorResponse = null;
         LlmEvaluationResult llmEvaluationResult = null;
         log.info("Starting agentic loop for agent: {}", agentId);
-        while(llmEvaluationResult == null || llmEvaluationResult.result() != AgentFlowControl.TASK_COMPLETED){
+        while(true){
             log.info("Current SubTask for agent {}: {}", agentId, currentSubTask.description());
             subTaskExecutorResponse = executeSubTask(currentSubTask);
-            log.info("SubTask executed for agent {}: {}", agentId, subTaskExecutorResponse.descriptionOfSubTaskExecution());
+            log.info("SubTask executed for agent {}: {}", agentId, subTaskExecutorResponse);
             log.info("Evaluating SubTask response for agent: {}", agentId);
             llmEvaluationResult = evaluateSubTaskResponse(originalTask, currentSubTask, subTaskExecutorResponse);
             log.info("Evaluation result for agent {} - Reason: {}, Result: {}", agentId, llmEvaluationResult.reason(), llmEvaluationResult.result());
             log.info("Generating next SubTask for agent: {}", agentId);
+            if(llmEvaluationResult.result() == AgentFlowControl.TASK_COMPLETED){
+                log.info("Task completed for agent: {}", agentId);
+                break;
+            }
             currentSubTask = taskDecomposer.getNextSubTask(currentSubTask, generateSystemMessageForDecomposeTask(originalTask), agentId.toString(), llmEvaluationResult);
             log.info("Next SubTask generated for agent: {}", agentId);
         }

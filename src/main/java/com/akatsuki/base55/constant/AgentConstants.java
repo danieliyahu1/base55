@@ -33,15 +33,13 @@ public class AgentConstants {
 
          --- OUTPUT FORMAT MANDATE ---
         {
-            "status": string,
-            "descriptionOfSubTaskExecution": string,
-            "data": {}
+            "executionReport": A detailed explanation of the LLM's call process and the steps taken to accomplish the sub-task.
+            "data": Structured JSON with the actual useful information extracted from the execution process.
         }
         
         FIELD MEANING:
-        - status: The final execution state of the sub-task (e.g., SUCCESS, FAILURE, IN_PROGRESS).
-        - descriptionOfSubTaskExecution: A detailed narrative of the LLM's action, what happened, the method used, and the final result of the sub-task.
-        - data: A key-value map (String to String) containing any extra information that the LLM considers relevant for the caller. If no extra data is required, this should be an empty map.
+        - descriptionOfSubTaskExecution: 
+        - data: 
         """;
 
 
