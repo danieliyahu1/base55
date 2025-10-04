@@ -1,6 +1,8 @@
 package com.akatsuki.base55.service;
 
 import com.akatsuki.base55.domain.AiResponseDomain;
+import com.akatsuki.base55.domain.agent.AiAgentMetadata;
+import com.akatsuki.base55.domain.agent.SubTaskExecutorResponse;
 import com.akatsuki.base55.dto.AiResponseDTO;
 import com.akatsuki.base55.exception.AgentNotFound;
 import com.akatsuki.base55.service.AiAgentPlatformService;
@@ -43,7 +45,11 @@ public class Base55Service {
         }
     }
 
-    public AiResponseDomain chatWithAgent(String id, String prompt) throws AgentNotFound {
-        return aiAgentService.chatWithAgent(id, prompt);
+    public SubTaskExecutorResponse executeTask(String id, String prompt) throws AgentNotFound {
+        return aiAgentService.executeTask(id, prompt);
+    }
+
+    public List<AiAgentMetadata> getAllAgents() {
+        return aiAgentService.getAllAgents();
     }
 }

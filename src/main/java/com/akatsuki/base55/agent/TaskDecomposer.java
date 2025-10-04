@@ -1,5 +1,6 @@
 package com.akatsuki.base55.agent;
 
+import com.akatsuki.base55.domain.LlmEvaluationResult;
 import com.akatsuki.base55.domain.SubTask;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
@@ -31,7 +32,7 @@ public class TaskDecomposer {
                 .build();
     }
 
-    public SubTask getNextSubTask(SubTask lastCompletedSubTask, String systemPrompt, String conversationId) {
+    public SubTask getNextSubTask(SubTask lastSubTask, String systemPrompt, String conversationId, LlmEvaluationResult llmEvaluationResult) {
         return this.chatClient.prompt()
                 .system(s -> s.text(
                         SYSTEM_PROMPT_TASK_DECOMPOSER
@@ -39,7 +40,8 @@ public class TaskDecomposer {
                                 + systemPrompt
                 ))
                 .user(u -> u.text(NEXT_SUB_TASK_TASK)
-                        .param("sub-task", lastCompletedSubTask.description()))
+                        .param("sub-task", lastSubTask.description())
+                        .param("evaluation", llmEvaluationResult))
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
                 .call()
                 .entity(SubTask.class);

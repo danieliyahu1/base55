@@ -6,6 +6,7 @@ import com.akatsuki.base55.domain.AiResponseDomain;
 import com.akatsuki.base55.domain.SubTask;
 import com.akatsuki.base55.domain.agent.AiAgentConfig;
 import com.akatsuki.base55.domain.agent.AiAgentMetadata;
+import com.akatsuki.base55.domain.agent.SubTaskExecutorResponse;
 import com.akatsuki.base55.domain.mcp.tools.McpToolSpec;
 import com.akatsuki.base55.dto.AiResponseDTO;
 import com.akatsuki.base55.entity.AiAgentConfigEntity;
@@ -52,6 +53,15 @@ public class AiAgentService {
         return registerAgent(
                 agentFactory.createAgent(aiAgentConfig)
         );
+    }
+
+    public SubTaskExecutorResponse executeTask(String id, String prompt) throws AgentNotFound {
+        UUID agentId = UUID.fromString(id);
+        AiAgent agent = agents.get(agentId);
+        if(agent == null){
+            throw new AgentNotFound(String.format(String.format(AGENT_NOT_FOUND_EXCEPTION_MESSAGE, id)));
+        }
+        return agent.executeTask(prompt);
     }
 
     public SubTask decomposeTask(UUID agentId, String task){
@@ -135,12 +145,13 @@ public class AiAgentService {
         );
     }
 
-    public AiResponseDomain chatWithAgent(String id, String prompt) throws AgentNotFound {
-        UUID agentId = UUID.fromString(id);
-        AiAgent agent = agents.get(agentId);
-        if(agent == null){
-            throw new AgentNotFound(String.format(String.format(AGENT_NOT_FOUND_EXCEPTION_MESSAGE, id))); //needs to create custom exception
-        }
-        return null;
+    public List<AiAgentMetadata> getAllAgents() {
+        return agents.values().stream()
+                .map(agent -> new AiAgentMetadata(
+                        agent.getAgentId(),
+                        agent.getAgentDescription(),
+                        "systemPrompt is not exposed here for security reasons"
+                ))
+                .toList();
     }
 }

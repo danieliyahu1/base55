@@ -14,7 +14,8 @@ public class AgentConstants {
     public static final String NEXT_SUB_TASK_TASK = """
         Based on the last sub-task completed, decompose the user original task into a single decompose step that the LLM can execute.
         Output only one clear and actionable instruction.
-        last completed sub-task: {sub-task}
+        last sub-task: {sub-task}
+        lass sub-task evaluation: {evaluation}
         """;
 
     public static final String FIRST_DECOMPOSITION = """
@@ -29,10 +30,54 @@ public class AgentConstants {
         Carefully read the sub-task description and determine the best approach to accomplish it.
         If needed use the available tools effectively to gather information, perform actions, and achieve the desired outcome.
         Always ensure that your actions align with the sub-task requirements.
+
+         --- OUTPUT FORMAT MANDATE ---
+        {
+            "status": string,
+            "descriptionOfSubTaskExecution": string,
+            "data": {}
+        }
+        
+        FIELD MEANING:
+        - status: The final execution state of the sub-task (e.g., SUCCESS, FAILURE, IN_PROGRESS).
+        - descriptionOfSubTaskExecution: A detailed narrative of the LLM's action, what happened, the method used, and the final result of the sub-task.
+        - data: A key-value map (String to String) containing any extra information that the LLM considers relevant for the caller. If no extra data is required, this should be an empty map.
         """;
+
 
     public static final String USER_PROMPT_SUB_TASK_EXECUTOR = """
         Execute reliably the following sub-task:
         {sub-task}
+        """;
+
+
+    // --- sub-task evaluation ---
+
+    public static final String SYSTEM_PROMPT_SUB_TASK_EVALUATOR = """
+            You are the Evaluation Component of an AI Agent system.
+             Your task is to evaluate the outcome of a single subtask execution and decide the next action.
+
+             Your output must be a JSON object with the following fields:
+               reason: explanation of your decision,
+               result: PROCEED_TO_NEXT_STEP | RETRY_CURRENT_STEP | TASK_COMPLETED
+
+             Here are the definitions of the possible results:
+                - PROCEED_TO_NEXT_STEP: The subtask succeeded and the agent can proceed to the next step.
+                - RETRY_CURRENT_STEP: The subtask failed but could succeed on another attempt (e.g., transient error, bad parameters).
+                - TASK_COMPLETED: The subtask was the final step and the overall task is now complete.
+            
+            """;
+
+    public static final String USER_PROMPT_SUB_TASK_EVALUATOR = """
+            Evaluate the following subtask execution.
+
+                Original Task:
+                {task}
+        
+                Subtask:
+                {sub-task}
+        
+                LLM Response:
+                {llm-response}
         """;
 }

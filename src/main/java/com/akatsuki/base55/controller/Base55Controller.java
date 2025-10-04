@@ -1,5 +1,7 @@
 package com.akatsuki.base55.controller;
 
+import com.akatsuki.base55.domain.agent.AiAgentMetadata;
+import com.akatsuki.base55.domain.agent.SubTaskExecutorResponse;
 import com.akatsuki.base55.domain.mcp.tools.McpToolSpec;
 import com.akatsuki.base55.domain.workflow.Workflow;
 import com.akatsuki.base55.dto.AiRequestDTO;
@@ -85,8 +87,13 @@ public class Base55Controller {
         return toolService.getToolById(id);
     }
 
-    @PostMapping("/agent/{id}")
-    public AiResponseDTO chatWithAgent(@PathVariable String id, @RequestBody AiRequestDTO request) throws AgentNotFound {
-        return new AiResponseDTO(base55Service.chatWithAgent(id, request.getPrompt()).result());
+    @PostMapping("/agents/{id}")
+    public SubTaskExecutorResponse executeTask(@PathVariable String id, @RequestBody AiRequestDTO request) throws AgentNotFound {
+        return base55Service.executeTask(id, request.getPrompt());
+    }
+
+    @GetMapping("/agents")
+    public List<AiAgentMetadata> getAllAgent() {
+        return base55Service.getAllAgents();
     }
 }

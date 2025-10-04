@@ -2,6 +2,7 @@ package com.akatsuki.base55.agent;
 
 import com.akatsuki.base55.domain.AiResponseDomain;
 import com.akatsuki.base55.domain.SubTask;
+import com.akatsuki.base55.domain.agent.SubTaskExecutorResponse;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.tool.ToolCallbackProvider;
@@ -20,14 +21,14 @@ public class SubTaskExecutor {
                 .build();
     }
 
-    public AiResponseDomain executeSubTask(SubTask subTask, String conversationId) {
+    public SubTaskExecutorResponse executeSubTask(SubTask subTask, String conversationId) {
         return this.chatClient.prompt()
                 .system(s -> s.text(SYSTEM_PROMPT_SUB_TASK_EXECUTOR))
                 .user(u -> u.text(USER_PROMPT_SUB_TASK_EXECUTOR)
                         .param("sub-task", subTask.description()))
                 .advisors(a -> a.param("conversationId", conversationId))
                 .call()
-                .entity(AiResponseDomain.class);
+                .entity(SubTaskExecutorResponse.class);
     }
 
 }

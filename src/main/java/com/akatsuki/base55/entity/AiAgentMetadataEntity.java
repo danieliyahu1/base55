@@ -26,6 +26,7 @@ public class AiAgentMetadataEntity {
     private UUID agentId;
 
     @Column(name = "system_prompt", nullable = false)
+    @Lob
     private String systemPrompt;
 
     @Builder

@@ -23,16 +23,15 @@ public class PlatformConstants {
     public static final String WORKFLOW_GENERATION_PROMPT = """
         Your task is to break this goal into a high-level workflow consisting of discrete steps that an AI agent should perform to accomplish the different tasks the user will want.
         The output must contain those fields:
-        1. 'analysis': A string describing the overall plan for the workflow.
-        2. 'aiAgentDescription': summary for the LLM of what the agent role(ignore how it is done).
-        3. 'systemPrompt': A string describing the system prompt that the LLM should use for its reasoning/execution.
-        4. 'WorkflowSteps': A list of 'WorkflowStep' objects, representing the sequential, successful paths, similar to a tree with one root and each leaf is a result that came from different way, you decide the number of leaf based on the task.
+        1. analysis: Describing the overall plan for the workflow.
+        2. aiAgentDescription: summary for the LLM of what the agent role(ignore how it is done).
+        3. systemPrompt: Describing the system prompt that the LLM should use for its reasoning/execution.
+        4. WorkflowSteps: High-level workflow consisting of discrete steps that an AI agent should perform to accomplish the different tasks the user will want.
     
         Here is the definition of a 'WorkflowStep' object:
-        - id: String (A unique identifier for the step)
-        - description: String (A brief description of what the step does)
-        - previousStepResultDependencies: List<String> (A list of 'id's of previous steps whose results are required as input for this step)
-        - nextSteps: Map<String, String> (A map where the key is the next step's 'id' and the value is the condition to transition to that step. The conditions can be any meaningful string that describes the outcome of the step. If a step has no next step in the successful path, the map should be empty.)
+           - id
+           - A concise description of the task the agent must perform
+           - A list of conceptual data required by this step (requiredData). This is not actual data, just what the step depends on.
     
         Notes:
             - Focus on high-level tasks only, do not generate execution details.
