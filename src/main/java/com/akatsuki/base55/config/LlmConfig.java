@@ -29,18 +29,6 @@ public class LlmConfig {
 //    }
 
     @Bean
-    @Qualifier("testChatClient")
-    public ChatClient groqChatClient(
-            @Qualifier("openAiChatModel") ChatModel openAiChatModel, ToolCallbackProvider toolCallbackProvider, @Qualifier("executorChatMemory") ChatMemory chatMemory) {
-        return ChatClient.builder(openAiChatModel)
-                .defaultToolCallbacks(toolCallbackProvider)
-                .defaultAdvisors(
-                        MessageChatMemoryAdvisor.builder(chatMemory).build()
-                )
-                .build();
-    }
-
-    @Bean
     public ChatModel openRouterChatModel(
             @Value("${openrouter.api.key}") String apiKey,
             @Value("${openrouter.base.url}") String baseUrl,

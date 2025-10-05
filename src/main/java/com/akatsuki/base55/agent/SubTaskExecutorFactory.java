@@ -15,8 +15,7 @@ public class SubTaskExecutorFactory {
 
     private final ChatModel chatModel;
     private final ChatMemory chatMemory;
-    //switch back to openAiChatModel
-    public SubTaskExecutorFactory(@Qualifier("openRouterChatModel") ChatModel chatModel,
+    public SubTaskExecutorFactory(@Qualifier("openAiChatModel") ChatModel chatModel,
                                   @Qualifier("executorChatMemory") ChatMemory chatMemory) {
         this.chatModel = chatModel;
         this.chatMemory = chatMemory;

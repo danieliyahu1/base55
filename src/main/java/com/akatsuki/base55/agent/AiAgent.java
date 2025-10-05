@@ -49,7 +49,8 @@ public class AiAgent {
         log.info("Starting task execution for agent: {}", agentId);
 
         log.info("Entering agentic loop for agent: {}", agentId);
-        return agenticLoop(task);
+        return executeSubTask(task);
+        //return agenticLoop(task);
     }
 
     // need to change the result in AiResponseDomain to be accurate
@@ -84,16 +85,9 @@ public class AiAgent {
         log.info("Starting agentic loop for agent: {} with task: {}", agentId, task);
         while(llmEvaluationResult == null || llmEvaluationResult.result() != AgentFlowControl.TASK_COMPLETED){
             aiResponseDomain = executeSubTask(task);
-
-            if(aiResponseDomain.agentResponseType() == AgentResponseType.TASK_CLARIFICATION) {
-                log.info("Agent {} is asking a question, breaking the loop to wait for user input", agentId);
-                return aiResponseDomain;
-            }
-            else{
-                log.info("Evaluating task response for agent: {} with task: {}", agentId, task);
-                llmEvaluationResult = evaluateSubTaskResponse(task, aiResponseDomain);
-                log.info("Evaluation response for agent {} - Reason: {}, Result: {}", agentId, llmEvaluationResult.reason(), llmEvaluationResult.result());
-            }
+            log.info("Evaluating task response for agent: {} with task: {}", agentId, task);
+            llmEvaluationResult = evaluateSubTaskResponse(task, aiResponseDomain);
+            log.info("Evaluation response for agent {} - Reason: {}, Result: {}", agentId, llmEvaluationResult.reason(), llmEvaluationResult.result());
         }
         log.info("Agentic loop completed for agent: {}", agentId);
         subTaskExecutor.clearChatMemory(agentId.toString());

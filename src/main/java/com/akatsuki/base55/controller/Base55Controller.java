@@ -38,9 +38,6 @@ public class Base55Controller {
     ToolCallbackProvider toolCallbackProvider;
     @Autowired
     ToolService toolService;
-    @Autowired
-    @Qualifier("testChatClient")
-    ChatClient chatClient;
 
     public Base55Controller(Base55Service base55Service) {
         this.base55Service = base55Service;
@@ -104,18 +101,7 @@ public class Base55Controller {
 
     @PostMapping("/agents2/{id}")
     public TaskExecutorResponse executeTask2(@PathVariable String id, @RequestBody AiRequestDTO request) throws AgentNotFound {
-        return executeSubTask(request.getPrompt(), id);
-        //return base55Service.executeTask2(id, request.getPrompt());
-    }
-
-    public TaskExecutorResponse executeSubTask(String task, String conversationId) {
-        return this.chatClient.prompt()
-                .system(s -> s.text(SYSTEM_PROMPT_TASK_EXECUTOR))
-                .user(u -> u.text(USER_PROMPT_SUB_TASK_EXECUTOR)
-                        .param("sub-task", task))
-                .advisors(a -> a.param("conversationId", conversationId))
-                .call()
-                .entity(TaskExecutorResponse.class);
+        return base55Service.executeTask2(id, request.getPrompt());
     }
 
     @GetMapping("/agents")

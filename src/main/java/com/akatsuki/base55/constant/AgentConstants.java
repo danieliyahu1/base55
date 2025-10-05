@@ -47,14 +47,6 @@ public class AgentConstants {
         Carefully read the sub-task description and determine the best approach to accomplish it.
         If needed use the available tools effectively to gather information, perform actions, and achieve the desired outcome.
         Always ensure that your actions align with the sub-task requirements.
-        Your output must be a JSON object with the following fields:
-        - response: your final answer or the result of the task execution or a clarification question if the task is not clear enough.
-        - agentResponseType: one of the following values: FINAL_ANSWER | TASK_CLARIFICATION | EXECUTION_UPDATE
-        
-        agentResponseType definitions:
-        - FINAL_ANSWER: Use this when you have completed the task and have the definitive final answer or result to provide. This terminates the task.
-        - TASK_CLARIFICATION: Use this when the sub-task description is ambiguous or incomplete, and you require more details or context from the user to understand what is being asked.
-        - EXECUTION_UPDATE: Use this when the task is clear, but you cannot proceed because of an internal or tool-related issue.
         """;
 
 
