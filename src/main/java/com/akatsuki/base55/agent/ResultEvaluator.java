@@ -14,7 +14,6 @@ import static com.akatsuki.base55.constant.AgentConstants.*;
 public class ResultEvaluator {
 
     private final ChatClient chatClient;
-
     public ResultEvaluator (@Qualifier("evaluationChatClient") ChatClient chatClient){
         this.chatClient = chatClient;
     }
@@ -30,7 +29,7 @@ public class ResultEvaluator {
                 .entity(LlmEvaluationResult.class);
     }
 
-    public LlmEvaluationResult evaluationSubTaskResponse(String task, AiResponseDomain taskResponse){
+    public LlmEvaluationResult evaluationSubTaskResponse(String task, String taskResponse){
         return this.chatClient.prompt()
                 .system(s -> s.text(SYSTEM_PROMPT_SUB_TASK_EVALUATOR))
                 .user(u -> u.text(USER_PROMPT_TASK_EVALUATOR)

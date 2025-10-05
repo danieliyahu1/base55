@@ -20,11 +20,23 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class LlmConfig {
 
+//    @Bean
+//    @Qualifier("evaluationChatClient")
+//    public ChatClient groqChatClient(
+//            @Qualifier("openAiChatModel") ChatModel openAiChatModel) {
+//        return ChatClient.builder(openAiChatModel)
+//                .build();
+//    }
+
     @Bean
-    @Qualifier("evaluationChatClient")
+    @Qualifier("testChatClient")
     public ChatClient groqChatClient(
-            @Qualifier("openAiChatModel") ChatModel openAiChatModel) {
+            @Qualifier("openAiChatModel") ChatModel openAiChatModel, ToolCallbackProvider toolCallbackProvider, @Qualifier("executorChatMemory") ChatMemory chatMemory) {
         return ChatClient.builder(openAiChatModel)
+                .defaultToolCallbacks(toolCallbackProvider)
+                .defaultAdvisors(
+                        MessageChatMemoryAdvisor.builder(chatMemory).build()
+                )
                 .build();
     }
 
@@ -52,16 +64,34 @@ public class LlmConfig {
     }
 
     @Bean
+    public ChatClient evaluationChatClient(
+            @Qualifier("openRouterChatModel") ChatModel openRouterChatModel) {
+        return ChatClient.builder(openRouterChatModel)
+                .build();
+    }
+
+    @Bean
+    @Qualifier("executorChatMemory")
+    public ChatMemory executorChatMemory(JdbcChatMemoryRepository chatMemoryRepository) {
+        return MessageWindowChatMemory.builder()
+                .chatMemoryRepository(chatMemoryRepository)
+                .maxMessages(10)
+                .build();
+    }
+
+    @Bean
     @Qualifier("executorChatClient")
     public ChatClient openRouterChatClient(
             @Qualifier("openRouterChatModel") ChatModel openRouterChatModel,
-            ToolCallbackProvider toolCallbackProvider) {
-
+            ToolCallbackProvider toolCallbackProvider, @Qualifier("executorChatMemory") ChatMemory chatMemory) {
         log.info("Registering OpenAI ChatClient with {} tool callbacks",
                 toolCallbackProvider.getToolCallbacks().length);
 
         return ChatClient.builder(openRouterChatModel)
-                //.defaultToolCallbacks(toolCallbackProvider)
+                .defaultToolCallbacks(toolCallbackProvider)
+                .defaultAdvisors(
+                        MessageChatMemoryAdvisor.builder(chatMemory).build()
+            )
                 .build();
     }
 

@@ -5,7 +5,9 @@ import com.akatsuki.base55.domain.LlmEvaluationResult;
 import com.akatsuki.base55.domain.SubTask;
 import com.akatsuki.base55.domain.agent.AiAgentMetadata;
 import com.akatsuki.base55.domain.agent.SubTaskExecutorResponse;
+import com.akatsuki.base55.domain.agent.TaskExecutorResponse;
 import com.akatsuki.base55.enums.AgentFlowControl;
+import com.akatsuki.base55.enums.AgentResponseType;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,7 +45,7 @@ public class AiAgent {
         return agenticLoop(firstSubTask, task);
     }
 
-    public AiResponseDomain executeTask2(String task) {
+    public TaskExecutorResponse executeTask2(String task) {
         log.info("Starting task execution for agent: {}", agentId);
 
         log.info("Entering agentic loop for agent: {}", agentId);
@@ -72,21 +74,29 @@ public class AiAgent {
             log.info("Next SubTask generated for agent: {}", agentId);
         }
         log.info("Agentic loop completed for agent: {}", agentId);
+        subTaskExecutor.clearChatMemory(agentId.toString());
         return subTaskExecutorResponse;
     }
 
-    private AiResponseDomain agenticLoop(String task){
+    private TaskExecutorResponse agenticLoop(String task){
         LlmEvaluationResult llmEvaluationResult = null;
-        AiResponseDomain aiResponseDomain = null;
+        TaskExecutorResponse aiResponseDomain = null;
         log.info("Starting agentic loop for agent: {} with task: {}", agentId, task);
         while(llmEvaluationResult == null || llmEvaluationResult.result() != AgentFlowControl.TASK_COMPLETED){
             aiResponseDomain = executeSubTask(task);
-            log.info("Evaluating task response for agent: {} with task: {}", agentId, task);
-            llmEvaluationResult = evaluateSubTaskResponse(task, aiResponseDomain);
-            log.info("Evaluation response for agent {} - Reason: {}, Result: {}", agentId, llmEvaluationResult.reason(), llmEvaluationResult.result());
 
+            if(aiResponseDomain.agentResponseType() == AgentResponseType.TASK_CLARIFICATION) {
+                log.info("Agent {} is asking a question, breaking the loop to wait for user input", agentId);
+                return aiResponseDomain;
+            }
+            else{
+                log.info("Evaluating task response for agent: {} with task: {}", agentId, task);
+                llmEvaluationResult = evaluateSubTaskResponse(task, aiResponseDomain);
+                log.info("Evaluation response for agent {} - Reason: {}, Result: {}", agentId, llmEvaluationResult.reason(), llmEvaluationResult.result());
+            }
         }
         log.info("Agentic loop completed for agent: {}", agentId);
+        subTaskExecutor.clearChatMemory(agentId.toString());
         return aiResponseDomain;
     }
 
@@ -97,7 +107,7 @@ public class AiAgent {
         );
     }
 
-    private AiResponseDomain executeSubTask(String task) {
+    private TaskExecutorResponse executeSubTask(String task) {
         return subTaskExecutor.executeSubTask(
                 task,
                 agentId.toString()
@@ -112,10 +122,10 @@ public class AiAgent {
         );
     }
 
-    private LlmEvaluationResult evaluateSubTaskResponse(String task, AiResponseDomain subTaskExecutorResponse) {
+    private LlmEvaluationResult evaluateSubTaskResponse(String task, TaskExecutorResponse subTaskExecutorResponse) {
         return resultEvaluator.evaluationSubTaskResponse(
                 task,
-                subTaskExecutorResponse
+                subTaskExecutorResponse.response()
         );
     }
 

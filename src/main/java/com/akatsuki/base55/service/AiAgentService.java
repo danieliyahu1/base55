@@ -7,6 +7,7 @@ import com.akatsuki.base55.domain.SubTask;
 import com.akatsuki.base55.domain.agent.AiAgentConfig;
 import com.akatsuki.base55.domain.agent.AiAgentMetadata;
 import com.akatsuki.base55.domain.agent.SubTaskExecutorResponse;
+import com.akatsuki.base55.domain.agent.TaskExecutorResponse;
 import com.akatsuki.base55.domain.mcp.tools.McpToolSpec;
 import com.akatsuki.base55.dto.AiResponseDTO;
 import com.akatsuki.base55.entity.AiAgentConfigEntity;
@@ -64,7 +65,7 @@ public class AiAgentService {
         return agent.executeTask(prompt);
     }
 
-    public AiResponseDomain executeTask2(String id, String prompt) throws AgentNotFound {
+    public TaskExecutorResponse executeTask2(String id, String prompt) throws AgentNotFound {
         UUID agentId = UUID.fromString(id);
         AiAgent agent = agents.get(agentId);
         if(agent == null){

@@ -3,6 +3,7 @@ package com.akatsuki.base55.service;
 import com.akatsuki.base55.domain.AiResponseDomain;
 import com.akatsuki.base55.domain.agent.AiAgentMetadata;
 import com.akatsuki.base55.domain.agent.SubTaskExecutorResponse;
+import com.akatsuki.base55.domain.agent.TaskExecutorResponse;
 import com.akatsuki.base55.dto.AiResponseDTO;
 import com.akatsuki.base55.exception.AgentNotFound;
 import com.akatsuki.base55.service.AiAgentPlatformService;
@@ -49,7 +50,7 @@ public class Base55Service {
         return aiAgentService.executeTask(id, prompt);
     }
 
-    public AiResponseDomain executeTask2(String id, String prompt) throws AgentNotFound {
+    public TaskExecutorResponse executeTask2(String id, String prompt) throws AgentNotFound {
         return aiAgentService.executeTask2(id, prompt);
     }
 

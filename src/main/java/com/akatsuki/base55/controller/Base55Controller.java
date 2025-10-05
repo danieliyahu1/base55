@@ -3,6 +3,7 @@ package com.akatsuki.base55.controller;
 import com.akatsuki.base55.domain.AiResponseDomain;
 import com.akatsuki.base55.domain.agent.AiAgentMetadata;
 import com.akatsuki.base55.domain.agent.SubTaskExecutorResponse;
+import com.akatsuki.base55.domain.agent.TaskExecutorResponse;
 import com.akatsuki.base55.domain.mcp.tools.McpToolSpec;
 import com.akatsuki.base55.domain.workflow.Workflow;
 import com.akatsuki.base55.dto.AiRequestDTO;
@@ -12,16 +13,21 @@ import com.akatsuki.base55.exception.Base55Exception;
 import com.akatsuki.base55.exception.ToolNotFoundException;
 import com.akatsuki.base55.service.Base55Service;
 import com.akatsuki.base55.service.ToolService;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.definition.ToolDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
+
+import static com.akatsuki.base55.constant.AgentConstants.SYSTEM_PROMPT_TASK_EXECUTOR;
+import static com.akatsuki.base55.constant.AgentConstants.USER_PROMPT_SUB_TASK_EXECUTOR;
 
 @RestController
 @RequestMapping("/api/v1/base55")
@@ -32,6 +38,9 @@ public class Base55Controller {
     ToolCallbackProvider toolCallbackProvider;
     @Autowired
     ToolService toolService;
+    @Autowired
+    @Qualifier("testChatClient")
+    ChatClient chatClient;
 
     public Base55Controller(Base55Service base55Service) {
         this.base55Service = base55Service;
@@ -94,8 +103,19 @@ public class Base55Controller {
     }
 
     @PostMapping("/agents2/{id}")
-    public AiResponseDomain executeTask2(@PathVariable String id, @RequestBody AiRequestDTO request) throws AgentNotFound {
-        return base55Service.executeTask2(id, request.getPrompt());
+    public TaskExecutorResponse executeTask2(@PathVariable String id, @RequestBody AiRequestDTO request) throws AgentNotFound {
+        return executeSubTask(request.getPrompt(), id);
+        //return base55Service.executeTask2(id, request.getPrompt());
+    }
+
+    public TaskExecutorResponse executeSubTask(String task, String conversationId) {
+        return this.chatClient.prompt()
+                .system(s -> s.text(SYSTEM_PROMPT_TASK_EXECUTOR))
+                .user(u -> u.text(USER_PROMPT_SUB_TASK_EXECUTOR)
+                        .param("sub-task", task))
+                .advisors(a -> a.param("conversationId", conversationId))
+                .call()
+                .entity(TaskExecutorResponse.class);
     }
 
     @GetMapping("/agents")
