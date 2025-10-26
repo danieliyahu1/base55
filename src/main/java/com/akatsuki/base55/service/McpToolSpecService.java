@@ -28,6 +28,7 @@ public class McpToolSpecService {
     }
 
     public List<McpToolSpec> initializeMcpTools() {
+        log.info("Initializing MCP tools from MCP clients.");
         return saveMcpTools(getMcpToolSpecsFromMcpClients(mcpSyncClients)).stream().map(
                 this::mcpToolSpecEntityToMcpToolSpec
         ).toList();
@@ -100,8 +101,9 @@ public class McpToolSpecService {
     }
 
     private McpToolSpecEntity saveMcpTool(McpToolSpec tool) {
+        String description = (tool.description() != null) ? tool.description() : tool.name();
         return mcpToolSpecRepository.save(
-                new McpToolSpecEntity(tool.id(), tool.serverName(), tool.name(), tool.description())
+                new McpToolSpecEntity(tool.id(), tool.serverName(), tool.name(), description)
         );
     }
 

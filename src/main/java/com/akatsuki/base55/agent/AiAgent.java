@@ -1,13 +1,9 @@
 package com.akatsuki.base55.agent;
 
-import com.akatsuki.base55.domain.AiResponseDomain;
-import com.akatsuki.base55.domain.LlmEvaluationResult;
-import com.akatsuki.base55.domain.SubTask;
 import com.akatsuki.base55.domain.agent.AiAgentMetadata;
-import com.akatsuki.base55.domain.agent.SubTaskExecutorResponse;
+import com.akatsuki.base55.domain.agent.LlmEvaluationResult;
 import com.akatsuki.base55.domain.agent.TaskExecutorResponse;
 import com.akatsuki.base55.enums.AgentFlowControl;
-import com.akatsuki.base55.enums.AgentResponseType;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,101 +14,42 @@ public class AiAgent {
 
     @Getter
     private final UUID agentId;
-    private final String systemPrompt;
     @Getter
     private final String agentDescription;
-    private final TaskDecomposer taskDecomposer;
-    private final SubTaskExecutor subTaskExecutor;
+    private final TaskExecutor taskExecutor;
     private final ResultEvaluator resultEvaluator;
 
-    public AiAgent(AiAgentMetadata aiAgentMetadata, TaskDecomposer taskDecomposer, SubTaskExecutor subTaskExecutor, ResultEvaluator resultEvaluator) {
+    public AiAgent(AiAgentMetadata aiAgentMetadata, TaskExecutor subTaskExecutor, ResultEvaluator resultEvaluator) {
         this.agentId = aiAgentMetadata.id();
-        this.systemPrompt = aiAgentMetadata.systemPrompt();
         this.agentDescription = aiAgentMetadata.description();
-        this.taskDecomposer = taskDecomposer;
-        this.subTaskExecutor = subTaskExecutor;
+        this.taskExecutor = subTaskExecutor;
         this.resultEvaluator = resultEvaluator;
     }
 
-    public SubTaskExecutorResponse executeTask(String task) {
-        log.info("Starting task execution for agent: {}", agentId);
-        log.info("Generating first SubTask for agent: {}", agentId);
-        SubTask firstSubTask = taskDecomposer.firstDecomposition(
-                generateSystemMessageForDecomposeTask(task)
-                , agentId.toString());
-        log.info("First SubTask generated for agent {}: {}", agentId, firstSubTask.description());
-        log.info("Entering agentic loop for agent: {}", agentId);
-        return agenticLoop(firstSubTask, task);
-    }
-
-    public TaskExecutorResponse executeTask2(String task) {
-        log.info("Starting task execution for agent: {}", agentId);
-
-        log.info("Entering agentic loop for agent: {}", agentId);
-        return executeSubTask(task);
-        //return agenticLoop(task);
-    }
-
-    // need to change the result in AiResponseDomain to be accurate
-    private SubTaskExecutorResponse agenticLoop(SubTask firstSubTask, String originalTask){
-        SubTask currentSubTask = firstSubTask;
-        SubTaskExecutorResponse subTaskExecutorResponse = null;
-        LlmEvaluationResult llmEvaluationResult = null;
-        log.info("Starting agentic loop for agent: {}", agentId);
-        while(true){
-            log.info("Current SubTask for agent {}: {}", agentId, currentSubTask.description());
-            subTaskExecutorResponse = executeSubTask(currentSubTask);
-            log.info("SubTask executed for agent {}: {}", agentId, subTaskExecutorResponse);
-            log.info("Evaluating SubTask response for agent: {}", agentId);
-            llmEvaluationResult = evaluateSubTaskResponse(originalTask, currentSubTask, subTaskExecutorResponse);
-            log.info("Evaluation result for agent {} - Reason: {}, Result: {}", agentId, llmEvaluationResult.reason(), llmEvaluationResult.result());
-            log.info("Generating next SubTask for agent: {}", agentId);
-            if(llmEvaluationResult.result() == AgentFlowControl.TASK_COMPLETED){
-                log.info("Task completed for agent: {}", agentId);
-                break;
-            }
-            currentSubTask = taskDecomposer.getNextSubTask(currentSubTask, generateSystemMessageForDecomposeTask(originalTask), agentId.toString(), llmEvaluationResult);
-            log.info("Next SubTask generated for agent: {}", agentId);
-        }
-        log.info("Agentic loop completed for agent: {}", agentId);
-        subTaskExecutor.clearChatMemory(agentId.toString());
-        return subTaskExecutorResponse;
+    public TaskExecutorResponse executeTask(String task) {
+        log.info("Before agentic loop for agent: {}", agentId);
+        return agenticLoop(task);
     }
 
     private TaskExecutorResponse agenticLoop(String task){
+        log.info("Starting agentic loop for agent: {} with task: {}", agentId, task);
         LlmEvaluationResult llmEvaluationResult = null;
         TaskExecutorResponse aiResponseDomain = null;
-        log.info("Starting agentic loop for agent: {} with task: {}", agentId, task);
         while(llmEvaluationResult == null || llmEvaluationResult.result() != AgentFlowControl.TASK_COMPLETED){
-            aiResponseDomain = executeSubTask(task);
+            aiResponseDomain = runTaskExecutor(task);
             log.info("Evaluating task response for agent: {} with task: {}", agentId, task);
             llmEvaluationResult = evaluateSubTaskResponse(task, aiResponseDomain);
             log.info("Evaluation response for agent {} - Reason: {}, Result: {}", agentId, llmEvaluationResult.reason(), llmEvaluationResult.result());
         }
         log.info("Agentic loop completed for agent: {}", agentId);
-        subTaskExecutor.clearChatMemory(agentId.toString());
+        taskExecutor.clearChatMemory(agentId.toString());
         return aiResponseDomain;
     }
 
-    private SubTaskExecutorResponse executeSubTask(SubTask subTask) {
-        return subTaskExecutor.executeSubTask(
-                subTask,
-                agentId.toString()
-        );
-    }
-
-    private TaskExecutorResponse executeSubTask(String task) {
-        return subTaskExecutor.executeSubTask(
+    private TaskExecutorResponse runTaskExecutor(String task) {
+        return taskExecutor.executeTask(
                 task,
                 agentId.toString()
-        );
-    }
-
-    private LlmEvaluationResult evaluateSubTaskResponse(String originalTask, SubTask subTask, SubTaskExecutorResponse subTaskExecutorResponse) {
-        return resultEvaluator.evaluationSubTaskResponse(
-                originalTask,
-                subTask,
-                subTaskExecutorResponse
         );
     }
 
@@ -121,12 +58,5 @@ public class AiAgent {
                 task,
                 subTaskExecutorResponse.response()
         );
-    }
-
-    private String generateSystemMessageForDecomposeTask(String task) {
-        return this.systemPrompt
-                + "\n"
-                + "The original task from the user: \n"
-                + task;
     }
 }

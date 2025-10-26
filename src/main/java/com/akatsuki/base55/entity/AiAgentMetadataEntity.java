@@ -25,14 +25,14 @@ public class AiAgentMetadataEntity {
     @Column(name = "agent_id", unique = true, nullable = false)
     private UUID agentId;
 
-    @Column(name = "system_prompt", nullable = false)
+    @Column(name = "agent_system_prompt", nullable = false)
     @Lob
-    private String systemPrompt;
+    private String agentSystemPrompt;
 
     @Builder
-    public AiAgentMetadataEntity(@NonNull String description, @NonNull UUID agentId, @NonNull String systemPrompt) {
+    public AiAgentMetadataEntity(@NonNull String description, @NonNull UUID agentId, @NonNull String agentSystemPrompt) {
         this.description = description;
         this.agentId = agentId;
-        this.systemPrompt = systemPrompt;
+        this.agentSystemPrompt = agentSystemPrompt;
     }
 }

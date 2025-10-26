@@ -6,6 +6,7 @@ import com.akatsuki.base55.domain.agent.AiAgentMetadata;
 import com.akatsuki.base55.domain.mcp.tools.McpToolSpec;
 import com.akatsuki.base55.domain.workflow.Workflow;
 import com.akatsuki.base55.domain.workflow.step.WorkflowStep;
+import com.akatsuki.base55.exception.Base55Exception;
 import com.akatsuki.base55.exception.ToolNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -31,7 +32,7 @@ public class AiAgentPlatformService {
         this.toolService = agentToolService;
     }
 
-    public Map<String, Object> createAgent(String task) throws ToolNotFoundException {
+    public Map<String, Object> createAgent(String task) throws ToolNotFoundException, Base55Exception {
         log.info("Creating agent for task: {}", task);
         Workflow workflow = agentWorkflowGeneratorService.generateAgentWorkflow(task);
         log.info("Generated workflow: {}", workflow);
@@ -51,7 +52,7 @@ public class AiAgentPlatformService {
         return agentWorkflowGeneratorService.generateAgentWorkflow(task);
     }
 
-    public List<McpToolSpec> getFilteredTools(String task) throws ToolNotFoundException {
+    public List<McpToolSpec> getFilteredTools(String task) throws ToolNotFoundException, Base55Exception {
         return this.getFilteredTools(
                 this.agentWorkflowGeneratorService.generateAgentWorkflow(task)
                 );
@@ -61,28 +62,20 @@ public class AiAgentPlatformService {
         return new AiAgentMetadata(java.util.UUID.randomUUID(), description, systemPrompt);
     }
 
-    private List<McpToolSpec> getFilteredTools(Workflow workflow) throws ToolNotFoundException {
+    private List<McpToolSpec> getFilteredTools(Workflow workflow) throws ToolNotFoundException, Base55Exception {
         Set<McpToolSpec> filteredMcpToolSpecsForStep = new HashSet<>();
         Set<McpToolSpec> filteredMcpToolSpecsForWorkflow = new HashSet<>();
         log.info("Attempting filtering tools for workflow with {} steps", workflow.WorkflowSteps().size());
         for(WorkflowStep step : workflow.WorkflowSteps()){
-            String similaritySearchQuery = getQueryForSimilaritySearch(step);
-            filteredMcpToolSpecsForStep.addAll(toolService.getSimilarToolsByQueryAndTopK(similaritySearchQuery, SIMILARITY_SEARCH_TOP_K));
+            filteredMcpToolSpecsForStep.addAll(toolService.getSimilarToolsByQueryAndTopK(step.task(), SIMILARITY_SEARCH_TOP_K));
             filteredMcpToolSpecsForWorkflow.addAll(filterToolsForWorkflowStep(step, filteredMcpToolSpecsForStep.stream().toList()));
+            filteredMcpToolSpecsForStep.clear();
         }
         log.info("Successfully filtered tools for workflow. Total filtered tools: {}", filteredMcpToolSpecsForWorkflow.size());
         return filteredMcpToolSpecsForWorkflow.stream().toList();
     }
 
-    private List<McpToolSpec> filterToolsForWorkflowStep(WorkflowStep workflowStep, List<McpToolSpec> mcpToolSpecs) throws ToolNotFoundException {
+    private List<McpToolSpec> filterToolsForWorkflowStep(WorkflowStep workflowStep, List<McpToolSpec> mcpToolSpecs) throws ToolNotFoundException, Base55Exception {
         return this.mcpToolFilteringService.getListOfToolsForWorkflowStep(workflowStep, mcpToolSpecs);
-    }
-
-    private String getQueryForSimilaritySearch(WorkflowStep step){
-        return String.format(
-                "Task: %s. Required inputs: %s.",
-                step.task(),
-                step.requiredData().toString()
-        );
     }
 }

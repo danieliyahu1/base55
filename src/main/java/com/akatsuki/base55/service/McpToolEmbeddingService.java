@@ -1,6 +1,7 @@
 package com.akatsuki.base55.service;
 
 import com.akatsuki.base55.domain.mcp.tools.McpToolSpec;
+import java.util.Collections;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
@@ -22,6 +23,7 @@ public class McpToolEmbeddingService {
     public void initializeMcpTools(List<McpToolSpec> tools) {
         log.info("initializing MCP tool embeddings in vector store.");
         saveMcpToolEmbeddingsInVectorStore(tools);
+        log.info("MCP tool embeddings initialization complete.");
     }
 
     public List<Document> getSimilarToolByQueryAndTopK(String query, int topK) {
@@ -33,10 +35,9 @@ public class McpToolEmbeddingService {
         List<Document> results = vectorStore.similaritySearch(searchRequest);
         if (results.isEmpty()) {
             log.warn("no similar tool found for query: %s".formatted(query));
-            return null;
+            return Collections.emptyList();
         }
-        log.info("found similar tools for query: %s".formatted(query));
-        return results;
+        log.info("found {} similar tools for query: {} with topK {} ",results.size(), query, topK);        return results;
     }
 
     public Document getToolById(String toolId) {

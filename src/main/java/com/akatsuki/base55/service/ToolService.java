@@ -1,7 +1,6 @@
 package com.akatsuki.base55.service;
 
 import com.akatsuki.base55.domain.mcp.tools.McpToolSpec;
-import com.akatsuki.base55.exception.ToolNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.tool.ToolCallbackProvider;

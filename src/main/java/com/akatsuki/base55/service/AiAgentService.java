@@ -2,14 +2,10 @@ package com.akatsuki.base55.service;
 
 import com.akatsuki.base55.agent.AgentFactory;
 import com.akatsuki.base55.agent.AiAgent;
-import com.akatsuki.base55.domain.AiResponseDomain;
-import com.akatsuki.base55.domain.SubTask;
 import com.akatsuki.base55.domain.agent.AiAgentConfig;
 import com.akatsuki.base55.domain.agent.AiAgentMetadata;
-import com.akatsuki.base55.domain.agent.SubTaskExecutorResponse;
 import com.akatsuki.base55.domain.agent.TaskExecutorResponse;
 import com.akatsuki.base55.domain.mcp.tools.McpToolSpec;
-import com.akatsuki.base55.dto.AiResponseDTO;
 import com.akatsuki.base55.entity.AiAgentConfigEntity;
 import com.akatsuki.base55.entity.AiAgentMetadataEntity;
 import com.akatsuki.base55.exception.AgentNotFound;
@@ -26,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.akatsuki.base55.constant.AgentConstants.FIRST_DECOMPOSITION;
 import static com.akatsuki.base55.exception.constant.ExceptionConstant.AGENT_NOT_FOUND_EXCEPTION_MESSAGE;
 
 @Service
@@ -56,22 +51,13 @@ public class AiAgentService {
         );
     }
 
-    public SubTaskExecutorResponse executeTask(String id, String prompt) throws AgentNotFound {
+    public TaskExecutorResponse executeTask(String id, String prompt) throws AgentNotFound {
         UUID agentId = UUID.fromString(id);
         AiAgent agent = agents.get(agentId);
         if(agent == null){
             throw new AgentNotFound(String.format(String.format(AGENT_NOT_FOUND_EXCEPTION_MESSAGE, id)));
         }
         return agent.executeTask(prompt);
-    }
-
-    public TaskExecutorResponse executeTask2(String id, String prompt) throws AgentNotFound {
-        UUID agentId = UUID.fromString(id);
-        AiAgent agent = agents.get(agentId);
-        if(agent == null){
-            throw new AgentNotFound(String.format(String.format(AGENT_NOT_FOUND_EXCEPTION_MESSAGE, id)));
-        }
-        return agent.executeTask2(prompt);
     }
 
     @EventListener(ApplicationReadyEvent.class)
@@ -97,7 +83,7 @@ public class AiAgentService {
                         new AiAgentMetadata(
                                 entity.getMetadata().getAgentId(),
                                 entity.getMetadata().getDescription(),
-                                entity.getMetadata().getSystemPrompt()
+                                entity.getMetadata().getAgentSystemPrompt()
                         ),
                         toolsByAgentId.get(entity.getMetadata().getAgentId())
                 )
@@ -134,7 +120,7 @@ public class AiAgentService {
                 AiAgentMetadataEntity.builder()
                         .agentId(aiAgentMetadata.id())
                         .description(aiAgentMetadata.description())
-                        .systemPrompt(aiAgentMetadata.systemPrompt())
+                        .agentSystemPrompt(aiAgentMetadata.agentSystemPrompt())
                         .build()
         );
     }

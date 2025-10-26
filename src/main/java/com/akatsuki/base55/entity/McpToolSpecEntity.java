@@ -27,7 +27,7 @@ public class McpToolSpecEntity {
     @Column(name = "tool_name", nullable = false)
     private String name;
 
-    @Column(name = "description", length = 1024)
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Builder

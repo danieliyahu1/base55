@@ -20,50 +20,19 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class LlmConfig {
 
-//    @Bean
-//    @Qualifier("evaluationChatClient")
-//    public ChatClient groqChatClient(
-//            @Qualifier("openAiChatModel") ChatModel openAiChatModel) {
-//        return ChatClient.builder(openAiChatModel)
-//                .build();
-//    }
-
     @Bean
-    public ChatModel openRouterChatModel(
-            @Value("${openrouter.api.key}") String apiKey,
-            @Value("${openrouter.base.url}") String baseUrl,
-            @Value("${openrouter.model}") String model,
-            @Value("${openrouter.temperature}") double temperature) {
-
-            OpenAiApi openAiApi = OpenAiApi.builder()
-                    .apiKey(apiKey)
-                    .baseUrl(baseUrl)
-                    .build();
-
-        OpenAiChatOptions options = OpenAiChatOptions.builder()
-                .model(model)
-                .temperature(temperature)
-                .build();
-
-        return OpenAiChatModel.builder()
-                .openAiApi(openAiApi)
-                .defaultOptions(options)
+    @Qualifier("evaluationChatClient")
+    public ChatClient groqChatClient(
+            @Qualifier("groqChatModel") ChatModel openAiChatModel) {
+        return ChatClient.builder(openAiChatModel)
                 .build();
     }
 
     @Bean
-    public ChatClient evaluationChatClient(
-            @Qualifier("openRouterChatModel") ChatModel openRouterChatModel) {
-        return ChatClient.builder(openRouterChatModel)
-                .build();
-    }
-
-    @Bean
-    @Qualifier("executorChatMemory")
-    public ChatMemory executorChatMemory(JdbcChatMemoryRepository chatMemoryRepository) {
-        return MessageWindowChatMemory.builder()
-                .chatMemoryRepository(chatMemoryRepository)
-                .maxMessages(10)
+    @Qualifier("TaskAnalysisChatClient")
+    public ChatClient groqChatClient2(
+            @Qualifier("groqChatModel") ChatModel openAiChatModel) {
+        return ChatClient.builder(openAiChatModel)
                 .build();
     }
 
@@ -84,49 +53,84 @@ public class LlmConfig {
     }
 
     @Bean
-    public ChatClient deepSeekChatClient(
-            @Qualifier("deepSeekChatModel") ChatModel deepseekChatModel) {
-        return ChatClient.builder(deepseekChatModel)
+    public ChatClient openAIChatClient(
+            @Qualifier("openAiChatModel") ChatModel chatModel) {
+        return ChatClient.builder(chatModel)
                 .build();
     }
 
-//    @Bean
-//    public ChatModel huggingFaceChatModel(
-//            @Value("${huggingface.chat.api-key}") String apiKey,
-//            @Value("${huggingface.chat.url}") String baseUrl,
-//            @Value("${huggingface.chat.model}") String model,
-//            @Value("${huggingface.chat.temperature}") double temperature) {
-//
-//        OpenAiApi openAiApi = OpenAiApi.builder()
-//                .apiKey(apiKey)
-//                .baseUrl(baseUrl) // https://router.huggingface.co/v1
-//                .build();
-//
-//        OpenAiChatOptions options = OpenAiChatOptions.builder()
-//                .model(model) // e.g. deepseek-ai/DeepSeek-V3.2-Exp:novita
-//                .temperature(temperature)
-//                .build();
-//
-//        return OpenAiChatModel.builder()
-//                .openAiApi(openAiApi)
-//                .defaultOptions(options)
-//                .build();
-//    }
-//
-//    @Bean
-//    @Qualifier("reasoningChatClient")
-//    public ChatClient huggingFaceChatClient(
-//            @Qualifier("huggingFaceChatModel") ChatModel huggingFaceChatModel, JdbcChatMemoryRepository chatMemoryRepository) {
-//        ChatMemory chatMemory = MessageWindowChatMemory.builder()
-//                .chatMemoryRepository(chatMemoryRepository)
-//                .maxMessages(10)
-//                .build();
-//
-//        return ChatClient
-//                .builder(huggingFaceChatModel)
-//                .defaultAdvisors(
-//                        MessageChatMemoryAdvisor.builder(chatMemory).build()
-//                )
-//                .build();
-//    }
+    @Bean
+    @Qualifier("testChatClient")
+    public ChatClient testChatClient(
+            @Qualifier("openAiChatModel") ChatModel chatModel,
+            @Qualifier("executorChatMemory") ChatMemory chatMemory,
+            ToolCallbackProvider toolCallbackProvider) {
+        return ChatClient.builder(chatModel)
+                .defaultToolCallbacks(toolCallbackProvider)
+                .defaultAdvisors(
+                        MessageChatMemoryAdvisor.builder(chatMemory).build()
+                )
+                .build();
+    }
+
+    // --- Chat Memory ---
+
+    @Bean
+    @Qualifier("executorChatMemory")
+    public ChatMemory executorChatMemory(JdbcChatMemoryRepository chatMemoryRepository) {
+        return MessageWindowChatMemory.builder()
+                .chatMemoryRepository(chatMemoryRepository)
+                .maxMessages(30)
+                .build();
+    }
+
+
+    // --- Chat Models ---
+
+    @Bean
+    public ChatModel groqChatModel(
+            @Value("${groq.api.key}") String apiKey,
+            @Value("${groq.base.url}") String baseUrl,
+            @Value("${groq.model}") String model,
+            @Value("${groq.temperature}") double temperature) {
+
+        OpenAiApi openAiApi = OpenAiApi.builder()
+                .apiKey(apiKey)
+                .baseUrl(baseUrl)
+                .build();
+
+        OpenAiChatOptions options = OpenAiChatOptions.builder()
+                .model(model)
+                .temperature(temperature)
+                .build();
+
+        return OpenAiChatModel.builder()
+                .openAiApi(openAiApi)
+                .defaultOptions(options)
+                .build();
+    }
+
+    @Bean
+    public ChatModel openRouterChatModel(
+            @Value("${openrouter.api.key}") String apiKey,
+            @Value("${openrouter.base.url}") String baseUrl,
+            @Value("${openrouter.model}") String model,
+            @Value("${openrouter.temperature}") double temperature) {
+
+        OpenAiApi openAiApi = OpenAiApi.builder()
+                .apiKey(apiKey)
+                .baseUrl(baseUrl)
+                .build();
+
+        OpenAiChatOptions options = OpenAiChatOptions.builder()
+                .model(model)
+                .temperature(temperature)
+                .build();
+
+        return OpenAiChatModel.builder()
+                .openAiApi(openAiApi)
+                .defaultOptions(options)
+                .build();
+    }
+
 }

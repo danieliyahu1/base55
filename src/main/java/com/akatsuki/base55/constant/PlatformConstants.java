@@ -29,9 +29,7 @@ public class PlatformConstants {
         4. WorkflowSteps: High-level workflow consisting of discrete steps that an AI agent should perform to accomplish the different tasks the user will want.
     
         Here is the definition of a 'WorkflowStep' object:
-           - id
-           - A concise description of the task the agent must perform
-           - A list of conceptual data required by this step (requiredData). This is not actual data, just what the step depends on.
+           - A concise description of the sub-task the agent must perform
     
         Notes:
             - Focus on high-level tasks only, do not generate execution details.
@@ -48,14 +46,16 @@ public class PlatformConstants {
 
     // --- tool filtering --
 
-    public static final String TOOL_FILTERING_LLM_ROLE = "You are an expert at analyzing workflows and selecting the most relevant tools to accomplish each step.";
+    public static final String TOOL_FILTERING_LLM_ROLE = """
+    You are an expert at analyzing workflow and evaluating tools relevance to accomplish each step.
+    For the following workflow step, analyze all available tools and provide a structured json of a list with the evaluating results for each tool how relevant it is to accomplish the step.:
+    
+    "id": "UUID" // The tool spec id field,
+    "isRequired": true or false,
+    "rationale": "string" // A brief explanation of why the tool is required or not required
+    """;
 
     public static final String TOOL_FILTERING_TASK_DESCRIPTION = """
-    For the following workflow step, analyze all available tools and decide which ones are most relevant. Provide a structured response with the following information for each relevant tool:
-    - The tool's ID.
-    - A brief explanation of why the tool is a good fit for the step.
-    - The specific function or purpose of the tool that matches the step's requirements.
-    
     Step: {step}
     
     Available tools:

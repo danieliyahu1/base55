@@ -1,6 +1,6 @@
 package com.akatsuki.base55.service;
 
-import com.akatsuki.base55.domain.LlmEvaluationResult;
+import com.akatsuki.base55.domain.agent.LlmEvaluationResult;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 

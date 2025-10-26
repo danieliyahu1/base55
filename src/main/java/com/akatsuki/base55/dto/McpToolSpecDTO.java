@@ -4,6 +4,5 @@ import java.util.UUID;
 
 public record McpToolSpecDTO(
         UUID id,
-        String name,
         String description
 ) { }

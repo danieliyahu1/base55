@@ -4,5 +4,5 @@ import lombok.NonNull;
 
 import java.util.UUID;
 
-public record AiAgentMetadata(@NonNull UUID id, @NonNull String description, @NonNull String systemPrompt) {
+public record AiAgentMetadata(@NonNull UUID id, @NonNull String description, @NonNull String agentSystemPrompt) {
 }

@@ -26,7 +26,7 @@ public class AgentConstants {
     // --- sub-task execution ---
 
     public static final String SYSTEM_PROMPT_SUB_TASK_EXECUTOR = """
-        You are a reliable expert AI agent that executes specific sub-tasks.
+        You are a reliable {ai_agent} that executes a task.
         Carefully read the sub-task description and determine the best approach to accomplish it.
         If needed use the available tools effectively to gather information, perform actions, and achieve the desired outcome.
         Always ensure that your actions align with the sub-task requirements.
@@ -43,16 +43,13 @@ public class AgentConstants {
         """;
 
     public static final String SYSTEM_PROMPT_TASK_EXECUTOR = """
-        You are a reliable expert AI agent that executes specific sub-tasks.
-        Carefully read the sub-task description and determine the best approach to accomplish it.
-        If needed use the available tools effectively to gather information, perform actions, and achieve the desired outcome.
-        Always ensure that your actions align with the sub-task requirements.
+        You are a reliable and self verify {ai_agent} that can break a task to sub tasks and use multiple tools until the task is accomplished.
+        Carefully read the task description and determine the best approach to accomplish it.
         """;
 
 
     public static final String USER_PROMPT_SUB_TASK_EXECUTOR = """
-        Execute reliably the following sub-task:
-        {sub-task}
+        {task}
         """;
 
 

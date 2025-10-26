@@ -1,20 +1,21 @@
 package com.akatsuki.base55.controller;
 
-import com.akatsuki.base55.domain.AiResponseDomain;
 import com.akatsuki.base55.domain.agent.AiAgentMetadata;
-import com.akatsuki.base55.domain.agent.SubTaskExecutorResponse;
 import com.akatsuki.base55.domain.agent.TaskExecutorResponse;
 import com.akatsuki.base55.domain.mcp.tools.McpToolSpec;
 import com.akatsuki.base55.domain.workflow.Workflow;
 import com.akatsuki.base55.dto.AiRequestDTO;
-import com.akatsuki.base55.dto.AiResponseDTO;
 import com.akatsuki.base55.exception.AgentNotFound;
 import com.akatsuki.base55.exception.Base55Exception;
 import com.akatsuki.base55.exception.ToolNotFoundException;
 import com.akatsuki.base55.service.Base55Service;
 import com.akatsuki.base55.service.ToolService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.document.Document;
+import org.springframework.ai.chat.client.ChatClientResponse;
+import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.definition.ToolDefinition;
@@ -31,6 +32,7 @@ import static com.akatsuki.base55.constant.AgentConstants.USER_PROMPT_SUB_TASK_E
 
 @RestController
 @RequestMapping("/api/v1/base55")
+@Slf4j
 public class Base55Controller {
 
     private final Base55Service base55Service;
@@ -38,6 +40,11 @@ public class Base55Controller {
     ToolCallbackProvider toolCallbackProvider;
     @Autowired
     ToolService toolService;
+    @Autowired
+    @Qualifier("testChatClient")
+    ChatClient testChatClient;
+    @Autowired
+    ChatMemory chatMemory;
 
     public Base55Controller(Base55Service base55Service) {
         this.base55Service = base55Service;
@@ -49,7 +56,7 @@ public class Base55Controller {
     }
 
     @PostMapping("/filter-tools")
-    public List<McpToolSpec> filterTools(@RequestBody AiRequestDTO request) throws ToolNotFoundException {
+    public List<McpToolSpec> filterTools(@RequestBody AiRequestDTO request) throws ToolNotFoundException, Base55Exception {
         return base55Service.getFilteredTools(request.getPrompt());
     }
 
@@ -68,40 +75,45 @@ public class Base55Controller {
         return toolService.getAllMcpToolSpecs();
     }
 
-    @PostMapping("/mcp-tool-spec-embeddings")
-    public List<Document> getAllMcpToolSpecEmbeddings(@RequestBody Map<String, Object> requestBody) {
-
-        // 1. Extract the String 'query'
-        String query = (String) requestBody.get("query");
-
-        // 2. Extract the Integer 'topK'.
-        //    Note: JSON numbers often map to Integer by default.
-        Integer topKObject = (Integer) requestBody.get("topK");
-
-        // Handle potential null or casting issues (important for robustness)
-        if (query == null || topKObject == null) {
-            // Throw an appropriate exception, e.g., Bad Request (400)
-            throw new IllegalArgumentException("Missing required parameters: query or topK");
-        }
-
-        int topK = topKObject; // Autounboxing
-
-        return toolService.getSimilarDocumentsByQueryAndTopK(query, topK);
-    }
-
-    @GetMapping("/mcp-tool-spec-embeddings/{id}")
-    public Document getMcpToolSpecEmbeddingById(@PathVariable String id) {
-        return toolService.getToolById(id);
-    }
-
-    @PostMapping("/agents/{id}")
-    public SubTaskExecutorResponse executeTask(@PathVariable String id, @RequestBody AiRequestDTO request) throws AgentNotFound {
+    @PostMapping("/agents2/{id}")
+    public TaskExecutorResponse executeTask(@PathVariable String id, @RequestBody AiRequestDTO request) throws AgentNotFound {
         return base55Service.executeTask(id, request.getPrompt());
     }
 
-    @PostMapping("/agents2/{id}")
-    public TaskExecutorResponse executeTask2(@PathVariable String id, @RequestBody AiRequestDTO request) throws AgentNotFound {
-        return base55Service.executeTask2(id, request.getPrompt());
+    @PostMapping("/testChatClient")
+    public ChatResponse testGroqChatClient(@RequestBody AiRequestDTO request) throws AgentNotFound {
+        log.info("Received request to check the function call on ChatClient");
+        String task = request.getPrompt();
+        return this.testChatClient.prompt()
+                .system(s -> s.text(SYSTEM_PROMPT_TASK_EXECUTOR))
+                .user(u -> u.text(USER_PROMPT_SUB_TASK_EXECUTOR)
+                        .param("sub-task", task))
+                .call()
+                .chatResponse();
+    }
+
+    @PostMapping("/testChatClient2")
+    public ChatClientResponse testGroqChatClient2(@RequestBody AiRequestDTO request) throws AgentNotFound {
+        log.info("Received request to check the function call on ChatClient2");
+        String task = request.getPrompt();
+        return this.testChatClient.prompt()
+                .system(s -> s.text(SYSTEM_PROMPT_TASK_EXECUTOR))
+                .user(u -> u.text(USER_PROMPT_SUB_TASK_EXECUTOR)
+                        .param("sub-task", task))
+                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, "testChatClient2"))
+                .call()
+                .chatClientResponse();
+    }
+
+    @DeleteMapping("/testChatClient2/memory/clear")
+    public List<Message> clearMemory(){
+        chatMemory.clear("testChatClient2");
+        return chatMemory.get("testChatClient2");
+    }
+
+    @GetMapping("/testChatClient2/memory/get")
+    public List<Message> getMemory(){
+        return chatMemory.get("testChatClient2");
     }
 
     @GetMapping("/agents")

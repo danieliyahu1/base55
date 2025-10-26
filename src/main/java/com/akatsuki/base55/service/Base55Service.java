@@ -1,14 +1,10 @@
 package com.akatsuki.base55.service;
 
-import com.akatsuki.base55.domain.AiResponseDomain;
 import com.akatsuki.base55.domain.agent.AiAgentMetadata;
-import com.akatsuki.base55.domain.agent.SubTaskExecutorResponse;
 import com.akatsuki.base55.domain.agent.TaskExecutorResponse;
-import com.akatsuki.base55.dto.AiResponseDTO;
-import com.akatsuki.base55.exception.AgentNotFound;
-import com.akatsuki.base55.service.AiAgentPlatformService;
 import com.akatsuki.base55.domain.mcp.tools.McpToolSpec;
 import com.akatsuki.base55.domain.workflow.Workflow;
+import com.akatsuki.base55.exception.AgentNotFound;
 import com.akatsuki.base55.exception.Base55Exception;
 import com.akatsuki.base55.exception.ToolNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +29,7 @@ public class Base55Service {
         return aiAgentPlatform.generateAgentWorkflow(task);
     }
 
-    public List<McpToolSpec> getFilteredTools(String task) throws ToolNotFoundException {
+    public List<McpToolSpec> getFilteredTools(String task) throws ToolNotFoundException, Base55Exception {
         return aiAgentPlatform.getFilteredTools(task);
     }
 
@@ -46,12 +42,8 @@ public class Base55Service {
         }
     }
 
-    public SubTaskExecutorResponse executeTask(String id, String prompt) throws AgentNotFound {
+    public TaskExecutorResponse executeTask(String id, String prompt) throws AgentNotFound {
         return aiAgentService.executeTask(id, prompt);
-    }
-
-    public TaskExecutorResponse executeTask2(String id, String prompt) throws AgentNotFound {
-        return aiAgentService.executeTask2(id, prompt);
     }
 
     public List<AiAgentMetadata> getAllAgents() {

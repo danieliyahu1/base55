@@ -1,62 +1,19 @@
 {
   "mcpServers": {
-    "mcp-installer": {
-      "command": "npx",
-      "args": [
-        "@anaisbetts/mcp-installer"
-      ]
-    },
-    "gemini-cli": {
-      "command": "npx",
-      "args": ["-y", "gemini-mcp-tool"]
-    },
-    "stripe": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@stripe/mcp",
-        "--tools=all"
-      ],
-      "env": {
-        "STRIPE_SECRET_KEY": "${stripe.api.key}"
-      }
-    },
-    "kubernetes": {
-      "command": "npx",
-      "args": ["mcp-server-kubernetes"]
-    },
     "exa": {
       "command": "npx",
       "args": [
         "-y",
         "mcp-remote",
-        "https://mcp.exa.ai/mcp?exaApiKey=${exa.api.key}"
-      ]
+        "https://mcp.exa.ai/mcp"
+      ],
+      "env": {
+          "EXA_API_KEY": "${exa.api.key}"
+      }
     },
     "context7": {
       "command": "npx",
       "args": ["-y", "@upstash/context7-mcp", "--api-key", "${context7.api.key}"]
-    },
-    "mcp-deepwiki": {
-      "command": "npx",
-      "args": ["-y", "mcp-deepwiki@latest"]
-    },
-    "biomcp": {
-      "command": "uv",
-      "args": ["run", "--with", "biomcp-python", "biomcp", "run"]
-    },
-    "biothings": {
-      "command": "uvx",
-      "args": [
-        "biothings-mcp"
-      ]
-    },
-    "gget-mcp": {
-      "command": "uvx",
-      "args": [
-        "gget-mcp",
-        "stdio"
-      ]
     },
     "met-museum": {
       "command": "npx",
@@ -65,23 +22,6 @@
         "metmuseum-mcp"
       ]
     },
-    "opengenes-mcp": {
-      "command": "uvx",
-      "args": [
-        "opengenes-mcp",
-        "stdio"
-      ]
-    },
-    "opengenes-mcp": {
-      "command": "uvx",
-      "args": [
-        "synergy-age-mcp"
-      ]
-    },
-    "bilibili-search": {
-      "command": "npx",
-      "args": ["bilibili-mcp"]
-    },
     "playwright": {
       "command": "npx",
       "args": [
@@ -89,21 +29,44 @@
         "--isolated"
       ]
     },
-    "browser": {
+    "mcp-server-chart": {
+      "command": "npx",
+      "args": ["-y", "@antv/mcp-server-chart"]
+    },
+    "coingecko_mcp": {
       "command": "npx",
       "args": [
-        "@agent-infra/mcp-server-browser@latest"
+        "mcp-remote",
+        "https://mcp.api.coingecko.com/mcp"
       ]
     },
-    "youtube-transcript": {
-      "command": "npx",
-      "args": ["-y", "@kimtaeyoon83/mcp-server-youtube-transcript"]
-    },
-    "web-search": {
+    "airbnb": {
       "command": "npx",
       "args": [
-        "websearch-mcp"
+        "-y",
+        "@openbnb/mcp-server-airbnb"
       ]
+    },
+    "mcp-time": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@theo.foobar/mcp-time"
+      ]
+    },
+    "alphavantage": {
+      "command": "uvx",
+      "args": [
+        "av-mcp",
+        "${alphavantage.api.key}"
+      ]
+    },
+    "campground-search-mcp-server": {
+      "command": "npx",
+      "args": ["-y", "campertunity-mcp-server@latest"],
+      "env": {
+        "CAMPERTUNITY_API_KEY": "${campertunity.api.key}"
+      }
     }
   }
 }
