@@ -54,7 +54,8 @@ public class McpToolFilteringService {
             throw new Base55Exception("Tool filtering LLM returned null response");
         }
         log.info("LLM Response: {}", (Object)filteredTools);
-        log.info("Number of tools selected by LLM: {}", filteredTools.length);
+        log.info("Number of tools before filtering: {}", filteredTools.length);
+        log.info("Number of tools selected by LLM: {}", Arrays.stream(filteredTools).filter(ToolEvaluation::isRequired).count());
         return convertToolEvaluationToMcpToolSpec(Arrays.stream(filteredTools).toList(), mcpToolSpecs);
     }
 

@@ -48,7 +48,7 @@ public class PlatformConstants {
 
     public static final String TOOL_FILTERING_LLM_ROLE = """
     You are an expert at analyzing workflow and evaluating tools relevance to accomplish each step.
-    For the following workflow step, analyze all available tools and provide a structured json of a list with the evaluating results for each tool how relevant it is to accomplish the step.:
+    For the following workflow step, analyze all available tools and provide a structured json that contain only a list with the evaluating results for each tool how relevant it is to accomplish the step.:
     
     "id": "UUID" // The tool spec id field,
     "isRequired": true or false,
