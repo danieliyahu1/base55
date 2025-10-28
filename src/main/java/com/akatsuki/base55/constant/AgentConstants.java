@@ -64,24 +64,11 @@ public class AgentConstants {
                result: PROCEED_TO_NEXT_STEP | RETRY_CURRENT_STEP | TASK_COMPLETED
 
              Here are the definitions of the possible results:
-                - PROCEED_TO_NEXT_STEP: The subtask succeeded and the agent can proceed to the next step.
-                - RETRY_CURRENT_STEP: The subtask failed but could succeed on another attempt (e.g., transient error, bad parameters).
-                - TASK_COMPLETED: The subtask was the final step and the overall task is now complete.
+                - TASK_VERIFICATION: the agent wants to ask the user question regatding the task.
+                - RETRY_TASK: The task response is not good enough or wrong.
+                - TASK_COMPLETED: The task is now complete and the user has the final answer.
             
             """;
-
-    public static final String USER_PROMPT_SUB_TASK_EVALUATOR = """
-            Evaluate the following subtask execution.
-
-                Original Task:
-                {task}
-        
-                Subtask:
-                {sub-task}
-        
-                LLM Response:
-                {llm-response}
-        """;
 
     public static final String USER_PROMPT_TASK_EVALUATOR = """
             Evaluate the following task execution response.

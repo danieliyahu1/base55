@@ -23,15 +23,7 @@ public class LlmConfig {
     @Bean
     @Qualifier("evaluationChatClient")
     public ChatClient groqChatClient(
-            @Qualifier("groqChatModel") ChatModel openAiChatModel) {
-        return ChatClient.builder(openAiChatModel)
-                .build();
-    }
-
-    @Bean
-    @Qualifier("TaskAnalysisChatClient")
-    public ChatClient groqChatClient2(
-            @Qualifier("groqChatModel") ChatModel openAiChatModel) {
+            @Qualifier("openAiChatModel") ChatModel openAiChatModel) {
         return ChatClient.builder(openAiChatModel)
                 .build();
     }
@@ -39,7 +31,7 @@ public class LlmConfig {
     @Bean
     @Qualifier("executorChatClient")
     public ChatClient openRouterChatClient(
-            @Qualifier("openRouterChatModel") ChatModel openRouterChatModel,
+            @Qualifier("openAiChatModel") ChatModel openRouterChatModel,
             ToolCallbackProvider toolCallbackProvider, @Qualifier("executorChatMemory") ChatMemory chatMemory) {
         log.info("Registering OpenAI ChatClient with {} tool callbacks",
                 toolCallbackProvider.getToolCallbacks().length);
@@ -56,20 +48,6 @@ public class LlmConfig {
     public ChatClient openAIChatClient(
             @Qualifier("openAiChatModel") ChatModel chatModel) {
         return ChatClient.builder(chatModel)
-                .build();
-    }
-
-    @Bean
-    @Qualifier("testChatClient")
-    public ChatClient testChatClient(
-            @Qualifier("openAiChatModel") ChatModel chatModel,
-            @Qualifier("executorChatMemory") ChatMemory chatMemory,
-            ToolCallbackProvider toolCallbackProvider) {
-        return ChatClient.builder(chatModel)
-                .defaultToolCallbacks(toolCallbackProvider)
-                .defaultAdvisors(
-                        MessageChatMemoryAdvisor.builder(chatMemory).build()
-                )
                 .build();
     }
 
