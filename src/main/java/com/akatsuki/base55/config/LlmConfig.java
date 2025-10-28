@@ -51,6 +51,13 @@ public class LlmConfig {
                 .build();
     }
 
+    @Bean
+    public ChatClient testChatClient(
+            @Qualifier("openAiChatModel") ChatModel chatModel) {
+        return ChatClient.builder(chatModel)
+                .build();
+    }
+
     // --- Chat Memory ---
 
     @Bean
