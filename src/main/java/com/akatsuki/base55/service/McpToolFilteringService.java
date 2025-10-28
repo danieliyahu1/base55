@@ -19,6 +19,7 @@ import java.util.UUID;
 
 import static com.akatsuki.base55.constant.PlatformConstants.TOOL_FILTERING_LLM_ROLE;
 import static com.akatsuki.base55.constant.PlatformConstants.TOOL_FILTERING_TASK_DESCRIPTION;
+import static com.akatsuki.base55.exception.constant.ExceptionConstant.NO_TOOLS_RELEVANT_FOR_WORKFLOW_STEP_EXCEPTION_MESSAGE;
 import static com.akatsuki.base55.exception.constant.ExceptionConstant.TOOL_NOT_FOUND_EXCEPTION_MESSAGE;
 
 @Slf4j
@@ -51,7 +52,7 @@ public class McpToolFilteringService {
 
         if(filteredTools == null){
             log.error("Tool filtering LLM returned null response");
-            throw new Base55Exception("Tool filtering LLM returned null response");
+            throw new Base55Exception(NO_TOOLS_RELEVANT_FOR_WORKFLOW_STEP_EXCEPTION_MESSAGE.formatted(step.task()));
         }
         log.info("LLM Response: {}", (Object)filteredTools);
         log.info("Number of tools before filtering: {}", filteredTools.length);

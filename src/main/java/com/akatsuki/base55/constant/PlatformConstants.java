@@ -66,6 +66,6 @@ public class PlatformConstants {
 
     // --- vector db / similarity search ---
 
-    public static final int SIMILARITY_SEARCH_TOP_K = 50;
+    public static final int SIMILARITY_SEARCH_TOP_K = 25;
     public static final String SIMILARITY_SEARCH_THRESHOLD = "0.7";
 }

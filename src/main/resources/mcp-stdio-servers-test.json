@@ -1,11 +1,11 @@
 {
   "mcpServers": {
-    "weatherApi": {
+    "campground-search-mcp-server": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@isdaniel/mcp_weather_server"
-      ]
+      "args": ["-y", "campertunity-mcp-server@latest"],
+      "env": {
+        "CAMPERTUNITY_API_KEY": "${campertunity.api.key}"
+      }
     }
   }
 }

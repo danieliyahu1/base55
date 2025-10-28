@@ -10,4 +10,5 @@ public class ExceptionConstant {
     public static final String TOOL_NOT_FOUND_EXCEPTION_MESSAGE = "Tool with ID %s not found.";
     public static final String TOOL_NOT_FOUND_BY_NAME_AND_SERVER_EXCEPTION_MESSAGE = "Tool with name %s and server %s not found.";
     public static final String AGENT_NOT_FOUND_EXCEPTION_MESSAGE = "Agent with ID %s not found.";
+    public static final String NO_TOOLS_RELEVANT_FOR_WORKFLOW_STEP_EXCEPTION_MESSAGE = "No tools found relevant for the workflow step: %s";
 }
