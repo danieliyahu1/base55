@@ -18,24 +18,25 @@ public class PlatformConstants {
 
     // --- workflow generation ---
 
-    public static final String WORKFLOW_GENERATION_ROLE = "You are an AI assistant that helps design agent workflows.";
+    public static final String WORKFLOW_GENERATION_ROLE = """
+                 You are an AI assistant that helps design agent workflows.
+            
+                 Your task is to break this goal into a high-level workflow consisting of discrete steps that an AI agent should perform to accomplish the different tasks the user will want.
+                 The goal of the workflow is to make it clear to know what are the appropriate tools to accomplish each step.
+                 The output must contain those fields:
+                 1. analysis: Describing the overall plan for the workflow.
+                 2. aiAgentDescription: summary for the LLM of what the agent role(ignore how it is done).
+                 3. systemPrompt: Describing the system prompt that the LLM should use for its reasoning/execution.
+                 4. WorkflowSteps: High-level workflow consisting of discrete steps that an AI agent should perform to accomplish the different tasks the user will want.
+            
+                 Here is the definition of a 'WorkflowStep' object:
+                    - A concise description of the sub-task the agent must perform
+            
+                 Notes:
+                     - Focus on high-level tasks only, do not generate execution details.
+                     - Use meaningful descriptions and data dependency hints for tool selection.""";
 
     public static final String WORKFLOW_GENERATION_PROMPT = """
-        Your task is to break this goal into a high-level workflow consisting of discrete steps that an AI agent should perform to accomplish the different tasks the user will want.
-        The output must contain those fields:
-        1. analysis: Describing the overall plan for the workflow.
-        2. aiAgentDescription: summary for the LLM of what the agent role(ignore how it is done).
-        3. systemPrompt: Describing the system prompt that the LLM should use for its reasoning/execution.
-        4. WorkflowSteps: High-level workflow consisting of discrete steps that an AI agent should perform to accomplish the different tasks the user will want.
-    
-        Here is the definition of a 'WorkflowStep' object:
-           - A concise description of the sub-task the agent must perform
-    
-        Notes:
-            - Focus on high-level tasks only, do not generate execution details.
-            - Consider optional steps if applicable.
-            - Use meaningful descriptions and data dependency hints for tool selection.
-    
         The user has the following goal:
         {primaryGoal}
 
