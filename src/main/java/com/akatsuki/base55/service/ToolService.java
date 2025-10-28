@@ -40,6 +40,10 @@ public class ToolService {
                 )).toList();
     }
 
+    public List<Document> getSimilarToolsByQueryAndTopK2(String query, int topK) {
+        return mcpToolEmbeddingService.getSimilarToolByQueryAndTopK(query, topK);
+    }
+
     public Document getToolById(String id) {
         return mcpToolEmbeddingService.getToolById(id);
     }

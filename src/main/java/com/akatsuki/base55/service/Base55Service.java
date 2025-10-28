@@ -49,4 +49,8 @@ public class Base55Service {
     public List<AiAgentMetadata> getAllAgents() {
         return aiAgentService.getAllAgents();
     }
+
+    public List<McpToolSpec> getAgentTools(String agentId) {
+        return aiAgentService.getAgentTools(agentId);
+    }
 }

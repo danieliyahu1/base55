@@ -142,4 +142,15 @@ public class AiAgentService {
                 ))
                 .toList();
     }
+
+    public List<McpToolSpec> getAgentTools(String agentId) {
+        UUID agentIdUUID = UUID.fromString(agentId);
+        log.info("before fetching metadata for agentId: {}", agentIdUUID);
+        AiAgentMetadataEntity aiAgentMetadata = aiAgentMetadataRepository.findByAgentId(agentIdUUID).orElseThrow(() -> new RuntimeException("AI Agent with ID " + agentId + " not found."));
+        log.info("after fetching metadata for agentId: {}", agentIdUUID);
+        log.info("before fetching config for metadata id: {}", aiAgentMetadata.getId());
+        AiAgentConfigEntity aiAgentConfigEntity = aiAgentConfigRepository.findByMetadata_Id(aiAgentMetadata.getId()).orElseThrow(() -> new RuntimeException("Metadata with ID " + aiAgentMetadata.getAgentId() + " not found."));
+        log.info("after fetching config for metadata id: {}", aiAgentMetadata.getId());
+        return toolService.getToolsByToolIds(aiAgentConfigEntity.getMcpToolSpecIds());
+    }
 }

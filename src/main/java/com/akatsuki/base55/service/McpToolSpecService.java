@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -88,16 +89,18 @@ public class McpToolSpecService {
                             .map(entity -> {
                                 // Log AFTER the database query (Found)
                                 log.info("Tool found: ServerName={}, ToolName={}", tool.serverName(), tool.name());
-                                return entity;
+                                return Optional.<McpToolSpecEntity>empty();
                             })
                             .orElseGet(() -> {
                                 // Log AFTER the database query (Not Found/Using orElseGet)
-                                log.warn("Tool NOT found: ServerName={}, ToolName={}. Creating new one.", tool.serverName(), tool.name());
+                                log.info("Tool NOT found: ServerName={}, ToolName={}. Creating new one.", tool.serverName(), tool.name());
 
                                 // Call the extracted method for clarity
-                                return saveMcpTool(tool);
+                                return Optional.of(saveMcpTool(tool));
                             });
-                }).toList();
+                })
+                .flatMap(Optional::stream)
+                .toList();
     }
 
     private McpToolSpecEntity saveMcpTool(McpToolSpec tool) {

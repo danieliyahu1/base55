@@ -1,11 +1,8 @@
 {
   "mcpServers": {
-    "campground-search-mcp-server": {
+    "mcp-server-chart": {
       "command": "npx",
-      "args": ["-y", "campertunity-mcp-server@latest"],
-      "env": {
-        "CAMPERTUNITY_API_KEY": "${campertunity.api.key}"
-      }
+      "args": ["-y", "@antv/mcp-server-chart"]
     }
   }
 }
